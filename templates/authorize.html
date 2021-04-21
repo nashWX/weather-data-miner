@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 mx-auto mt-4">
+            {% if messages %}
+                {% for message in messages %}
+                <div {% if message.tags %} class="mb-1 alert alert-{{ message.tags }}"{% endif %}>{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        </div>
+        <div class="col-12 vh-100 d-flex align-items-center justify-content-center">
+            <div class="form-container">
+                <form class="loginform text-center" method="POST" action="{% url 'authorize' %}">
+                    {% csrf_token %}
+                    <h2>Password</h2>
+                    <div class="mb-4">
+                        <input type="password" class="form-control password mx-auto" name="password">
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="starttime">START TIME</label>
+                            <input type="number" onKeyPress="if(this.value.length >= 12) return false;" class="form-control" id="starttime" name="starttime">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="endtime">END TIME</label>
+                            <input type="number" onKeyPress="if(this.value.length >= 12) return false;"  class="form-control" id="endtime" name="endtime">
+                        </div>
+                    </div>
+                    <div class="mb-4 text-center">
+                        <button class="enter">Enter</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,272 @@
+body {
+    background-color: #000;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 500;
+    color: #ddd;
+}
+img {
+    max-width: 100%;
+}
+
+.form-container{
+    width: 570px;
+    min-height: 350px;
+    background: linear-gradient(#14D4CF, #2FABE5);
+    padding: 1.5rem;
+    border-radius: 1rem;
+    max-width: 100%;
+}
+.loginform {
+    background: #000;
+    border-radius: 1.5rem;
+    width: 100%;
+    height: 100%;
+    padding: 1.5rem;
+}
+
+.loginform h2 {
+    color: #22D4CE;
+    font-size: 4rem;
+    text-transform: uppercase;
+}
+
+.loginform .form-control {
+    border-radius: 1rem;
+}
+
+.loginform .password {
+    width: 85%;
+}
+
+.loginform label {
+    font-size: 2rem;
+    font-weight: 600;
+    background: linear-gradient(#14D4CF, #2FABE5);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.enter {
+    font-weight: 600;
+    font-size: 30px;
+    color: #2FABE5;
+    border: 3px solid #2FABE5;
+    border-radius: 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #000;
+    padding: 3px 10px;
+    margin-top: 2rem;
+    text-transform: uppercase;
+}
+
+.option-container{
+    width: 777px;
+    margin: 0 auto;
+}
+.option-container form {
+    width: 100%;
+    display: grid;
+    place-items: center;
+}
+
+.subject-btn {
+    height: 100px;
+    display: flex;
+    width: 68%;
+    margin-bottom: 2rem;
+    border: 10px solid;
+    border-radius: 45px / 15px;
+    background-image: linear-gradient(#14D4CF, #2FABE5);
+    background-origin: border-box;
+    background-clip: padding-box, border-box;
+    background-color: #000;
+    padding: 10px;
+}
+.subject-btn .btn-content {
+    background-color: #000;
+    color: #14D4CF;
+    display: flex;
+    width: 100%;
+    height: 100%;
+    position: relative;
+    align-items: center;
+    text-transform: uppercase;
+    font-size: 2rem;
+    font-weight: 600;
+    font-family: inherit;
+    padding-left: 2.5rem;
+    justify-content: start;
+}
+.subject-btn .btn-content .icon {
+    width: 80px;
+    height: 80px;
+    position: absolute;
+    left: -50px;
+    top: -10px;
+    border-radius: 50%;
+    color: #2FABE5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 5px solid #14D4CF;
+    background-color: #000;
+    font-size: 2rem;
+}
+
+.subject-btn .btn-content .no-report {
+    margin-right: 10px;
+    color: #2FABE5;
+}
+
+.section-title {
+    font-size: 4.3rem;
+    color: #14D4CF;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin: 1rem 0 1.5rem 0;
+}
+
+.weather-info {
+    width: 100%;
+    height: 500px;
+    position: relative;
+    display: block;
+}
+.weather-info.tornado {
+   background: url(../img/tornadotemplate.png);
+   background-position: center;
+   background-repeat: no-repeat;
+   background-size: cover;
+}
+.weather-info.tstorm {
+    background: url(../img/tstormtemplate.png);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+.weather-info.flood {
+    background: url(../img/floodtemplate.png);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+.weather-info.hashtag {
+    background: url(../img/hashtagtemplate.png);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.map {
+    position: absolute;
+    top: 43%;
+    left: 0;
+    width: 100%;
+    min-height: 120px;
+    /* border-radius: 10px; */
+    display: grid;
+    place-items: center;
+    width: 100%;
+}
+
+.map img {
+    width: 180px;
+    border-radius: 10px;
+    position: relative;
+}
+
+.weather-info.flood .map img {
+    left: 11px;
+}
+
+.map .tagname {
+    font-size: 2em;
+    font-weight: 600;
+    color: #14D4CF;
+}
+
+.time-stamp {
+    display: flex;
+    position: absolute;
+    top: 28%;
+    width: 66%;
+    justify-content: space-between;
+    left: 57px;
+    color: #14D4CF;
+    font-size: 1.4rem;
+    font-weight: 500;
+}
+
+.population {
+    position: absolute;
+    bottom: 18%;
+    width: 100%;
+    display: grid;
+    place-items: center;
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: #2FABE5;
+}
+
+.locality {
+    position: absolute;
+    bottom: 6%;
+    font-size: 13px;
+    font-weight: 500;
+    color: #2FABE5;
+    word-break: break-word;
+    width: 246px;
+    left: 13%;
+}
+
+.hashtag .population {
+    bottom: 19%;
+}
+.tstorm .population,
+.tornado .population{
+    bottom: 17%;
+}
+
+
+@media screen and (min-width: 376px) and (max-width: 425px) {
+    .locality {
+        left: 18%;
+    }
+    .time-stamp {
+        left: 83px;
+        width: 57%;
+    }
+}
+
+@media screen and (max-width: 425px) {
+    .section-title {
+        font-size: 3rem;
+    }
+}
+
+@media screen and (max-width: 776px) {
+    .option-container {
+        max-width: 100%;
+        width: 100%;
+    }
+
+    .subject-btn {
+        width: 70%;
+        height: 83px;
+    }
+
+    .subject-btn .btn-content {
+        font-size: 14px;
+    }
+
+    .subject-btn .btn-content .icon {
+        width: 50px;
+        height: 50px;
+        position: absolute;
+        left: -30px;
+        top: -4px;
+    }
+}
