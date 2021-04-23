@@ -16,24 +16,33 @@
                     {% csrf_token %}
                     <h2>Password</h2>
                     <div class="mb-4">
-                        <input type="password" class="form-control password mx-auto" name="password">
+                        <input type="password" class="form-control password mx-auto" name="password" required autofocus />
                     </div>
                     <div class="row">
                         <div class="col-md-6">
                             <label for="starttime">START TIME</label>
-                            <input type="number" onKeyPress="if(this.value.length >= 12) return false;" class="form-control" id="starttime" name="starttime">
+                            <input type="text" required class="form-control picker" id="starttime" name="starttime" />
                         </div>
                         <div class="col-md-6">
                             <label for="endtime">END TIME</label>
-                            <input type="number" onKeyPress="if(this.value.length >= 12) return false;"  class="form-control" id="endtime" name="endtime">
+                            <input type="text" required  class="form-control picker" id="endtime" name="endtime" />
                         </div>
                     </div>
                     <div class="mb-4 text-center">
-                        <button class="enter">Enter</button>
+                        <button class="enter" type="submit">Enter</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block script %}
+    <script>
+        flatpickr(".picker", {
+            enableTime: true,
+            dateFormat: 'Y-m-d h:i'
+        });
+    </script>
 {% endblock %}

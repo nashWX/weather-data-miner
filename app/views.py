@@ -4,7 +4,7 @@ from django.contrib import messages
 
 from .models import AccessPassword
 from .utils.get_locations import get_locations, location_url
-from .utils.parse_timestamp import get_parsed_time
+from .utils.parse_datetime import get_parsed_time
 from .utils.data import hash_tags, hash_url
 
 def authorize(request):
@@ -24,10 +24,15 @@ def authorize(request):
     return render(request, 'authorize.html')
 
 def activeReport(request):
+    context = {
+       'amount_tornado_warnings': 4,
+       'amount_tstorm_warnings': 22,
+       'amount_flood_warnings': 6
+    }
     if not request.session.get('authenticate'):
         messages.add_message(request, messages.WARNING, 'please provided required info before visit any other page')
         return redirect(reverse('authorize'))
-    return render(request, 'active-report.html')
+    return render(request, 'active-report.html', context=context)
 
 
 def location(request):
@@ -40,8 +45,8 @@ def location(request):
             'type': _type, 
             'locationData': get_locations(), 
             'location_url': location_url,
-            'start_time': get_parsed_time(int(request.session.get('starttime'))),
-            'end_time': get_parsed_time(int(request.session.get('endtime'))),
+            'start_time': get_parsed_time(request.session.get('starttime')),
+            'end_time': get_parsed_time(request.session.get('endtime')),
             'hash_tags': hash_tags,
             'hash_url': hash_url
         }

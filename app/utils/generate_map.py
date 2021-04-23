@@ -26,13 +26,14 @@ def generate_map(location_name='', location_id=''):
     
     try:
         geolocator = Nominatim(user_agent=agent)
-        locationz = geolocator.geocode(location_name)
+        locationz = geolocator.geocode(location_name, timeout=10)
         lons = locationz.longitude
         lats = locationz.latitude 
         m = Basemap(projection='merc',llcrnrlat=lats-2,urcrnrlat=lats+2,\
                     llcrnrlon=lons-4, urcrnrlon=lons+4, resolution='l', area_thresh=15)
 
         x,y = m(lons, lats)
+
         m.drawcoastlines(color='aqua', linewidth=1)
         m.drawcountries(color='aqua', linewidth=1)
         m.drawstates(color='aqua', linewidth=2)
@@ -41,7 +42,7 @@ def generate_map(location_name='', location_id=''):
         m.drawlsmask(land_color='black', ocean_color='aqua', resolution='l')
         m.plot(x, y, 'ko', markersize=10.5)
         m.plot(x, y, 'wo', markersize=8)
-        plt.savefig(temp_path, dpi=100, facecolor='b', edgecolor='b',
+        plt.savefig(temp_path, dpi=95, facecolor='b', edgecolor='b',
                 orientation='portrait', format=None,
                 transparent=False, bbox_inches=None, pad_inches=0.1)
 

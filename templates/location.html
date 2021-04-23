@@ -11,7 +11,7 @@
         <div class="row justify-center text-center">
             {% if type != 'hashtag' %}
                 {% for location in locationData %}
-                    <div class="col-xl-3 col-lg-4 col-md-6 col-12">
+                    <div class="col-xl-3 col-lg-4 col-md-6 col-12 px-0 mb-xs-4">
                         <a href="{{location_url}}{{location.location_id}}" class="weather-info {{type}}" target="_blank">
                             <div class="time-stamp">
                                 <div class="starttime">{{ start_time }}</div>
@@ -21,7 +21,11 @@
                                 <img src="{% static location.location_map %}" alt="map">
                             </div>
                             <div class="population">{{ location.population }}</div>
-                            <div class="locality">{{ location.name }}</div>
+                            <div class="locality">
+                                {% for name in location.name %}
+                                    <p>{{name|truncatechars:18}}</p>
+                                {% endfor %}
+                            </div>
                         </a>
                     </div>
                 {% endfor %}
@@ -30,7 +34,7 @@
       
             {% if type == 'hashtag' %}
                 {% for hash in hash_tags %}
-                    <div class="col-xl-3 col-lg-4 col-md-6 col-12">
+                    <div class="col-xl-3 col-lg-4 col-md-6 col-12 px-0">
                         <a href="{{hash_url}}{{hash.name}}" class="weather-info {{type}}" target="_blank">
                             <div class="map">
                                 <div class="tagname">{{ hash.name }}</div>
