@@ -14,7 +14,7 @@ def generate_map(location_name='', location_id=''):
     #main acctual file location
     name = saveLocation/(location_id+'_map.png')
     #temp file location
-    temp_path = saveLocation / 'temp.jpg'
+    temp_path = saveLocation / 'temp.png'
     #this location will use for show this image in template
     returnPath = f'img/{location_id}_map.png'
 
@@ -42,17 +42,28 @@ def generate_map(location_name='', location_id=''):
         m.drawlsmask(land_color='black', ocean_color='aqua', resolution='l')
         m.plot(x, y, 'ko', markersize=10.5)
         m.plot(x, y, 'wo', markersize=8)
-        plt.savefig(temp_path, dpi=95, facecolor='b', edgecolor='b',
-                orientation='portrait', format=None,
-                transparent=False, bbox_inches=None, pad_inches=0.1)
 
-        img = Image.open(temp_path) 
-        border = (100, 100, 100, 100) # left, up, right, bottom
-        cropped_img = ImageOps.crop(img, border)
+        plt.axis('off')
+        plt.gca().set_axis_off()
+        plt.subplots_adjust(top = 1, bottom = 0, right = 1, left = 0, 
+                    hspace = 0, wspace = 0)
+        plt.margins(0,0)
+        plt.gca().xaxis.set_major_locator(plt.NullLocator())
+        plt.gca().yaxis.set_major_locator(plt.NullLocator())
+
+        plt.savefig(name, dpi=100, facecolor='b', edgecolor='b',
+                orientation='portrait', format=None,
+                transparent=True, bbox_inches='tight', pad_inches=0)
+
+        plt.close('all')
+
+        # img = Image.open(temp_path) 
+        # border = (100, 100, 100, 100) # left, up, right, bottom
+        # cropped_img = ImageOps.crop(img, border)
        
-        cropped_img.save(name, 'PNG')
-        #removing temporary image
-        removeFile(temp_path)
+        # cropped_img.save(name, 'PNG')
+        # #removing temporary image
+        # removeFile(temp_path)
 
         return returnPath
     except Exception as e:

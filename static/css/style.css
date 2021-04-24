@@ -470,6 +470,10 @@ a.weather-info.hashtag .map {
 @media screen and (max-width: 320px){
     .weather-info.tornado .map {
         left: 17.8%;
+        /* left: 19.8%;
+        width: 198px;
+        height: 126px;
+        top: 43%; */
     }
     .weather-info.flood .map {
       left: 21.5%;
