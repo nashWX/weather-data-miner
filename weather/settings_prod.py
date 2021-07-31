@@ -12,4 +12,4 @@ DATABASES = {
     }
 }
 
-STATIC_ROOT = '/home/weather-project/weather-data-miner/static/'
+STATIC_ROOT = '/home/weather-project/weather-data-miner/staticfiles/'
