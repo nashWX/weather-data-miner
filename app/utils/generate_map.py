@@ -1,34 +1,43 @@
-from os import path, remove as removeFile
+import matplotlib
+
 import matplotlib.pyplot as plt
 from mpl_toolkits.basemap import Basemap
-from geopy.geocoders import Nominatim
-from PIL import Image, ImageOps
 from django.conf import settings
+from pathlib import Path
 
+matplotlib.use('Agg')
 
-saveLocation = settings.BASE_DIR / 'static' / 'img' 
+saveLocation = settings.BASE_DIR / 'media' / 'img' 
 returnPath = ''
 agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.72 Safari/537.36 Edg/90.0.818.42"
 
-def generate_map(location_name='', location_id=''):
-    #main acctual file location
-    name = saveLocation/(location_id+'_map.png')
-    #temp file location
-    temp_path = saveLocation / 'temp.png'
-    #this location will use for show this image in template
-    returnPath = f'img/{location_id}_map.png'
 
-    if not location_name and not location_id:
+def generate_map(lats:float, lons:float, place_id:str):
+
+    #create new directory if not exists
+    Path(saveLocation).mkdir(parents=True, exist_ok=True)
+
+    #main acctual file location
+    name = saveLocation/(place_id+'_map.png')
+
+    #this location will use for show this image in template
+    returnPath = f'/media/img/{place_id}_map.png'
+
+    # if not location_name and not location_id:
+    #     return
+    if not lats and not lons and not place_id:
         return
     
-    if path.exists(name):
+    if Path(name).is_file():
         return  returnPath
     
     try:
-        geolocator = Nominatim(user_agent=agent)
-        locationz = geolocator.geocode(location_name, timeout=10)
-        lons = locationz.longitude
-        lats = locationz.latitude 
+        # geolocator = Nominatim(user_agent=agent)
+        # locationz = geolocator.geocode(location_name, timeout=10)
+        # print('longitude ', locationz.longitude)
+        # print('latitude ', locationz.latitude)
+        # lons = locationz.longitude
+        # lats = locationz.latitude 
         m = Basemap(projection='merc',llcrnrlat=lats-2,urcrnrlat=lats+2,\
                     llcrnrlon=lons-4, urcrnrlon=lons+4, resolution='l', area_thresh=15)
 
@@ -57,14 +66,7 @@ def generate_map(location_name='', location_id=''):
 
         plt.close('all')
 
-        # img = Image.open(temp_path) 
-        # border = (100, 100, 100, 100) # left, up, right, bottom
-        # cropped_img = ImageOps.crop(img, border)
-       
-        # cropped_img.save(name, 'PNG')
-        # #removing temporary image
-        # removeFile(temp_path)
-
         return returnPath
     except Exception as e:
         print('error ', e)
+        return None

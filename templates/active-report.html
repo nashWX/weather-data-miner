@@ -6,7 +6,7 @@
         <div class="col-12 text-center">
             <h2 class="section-title">Active Reports</h2>
             <div class="option-container d-flex flex-column align-items-center">
-                <form method="post" action="{% url 'location' %}">
+                <form method="post" action="{% url 'warnings' %}">
                     {% csrf_token %}
                     <input type="hidden" name="type" value="tornado">
                     <button class="subject-btn" type="submit">
@@ -23,7 +23,7 @@
                         </span>
                     </button>
                 </form>
-                <form method="post" action="{% url 'location' %}">
+                <form method="post" action="{% url 'warnings' %}">
                     {% csrf_token %}
                     <input type="hidden" name="type" value="tstorm">
                     <button class="subject-btn" type="submit">
@@ -39,7 +39,7 @@
                         </div>
                     </button>
                 </form>
-                <form method="POST" action="{% url 'location' %}">
+                <form method="POST" action="{% url 'warnings' %}">
                     {% csrf_token %}
                     <input type="hidden" name="type" value="flood">
                     <button class="subject-btn">
@@ -54,7 +54,7 @@
                         </div>
                     </button>
                 </form>
-                <form method="post" action="{% url 'location' %}">
+                <form method="post" action="{% url 'warnings' %}">
                     {% csrf_token %}
                     <input type="hidden" name="type" value="hashtag">
                     <button class="subject-btn">

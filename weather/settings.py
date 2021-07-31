@@ -11,21 +11,18 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 from pathlib import Path
-
+from decouple import config
+from celery.schedules import crontab
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-8z&brt7e7c(b^mq46bx2ub$b5+&r9m%w3g8tqv^uc0^#feha3s'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config('DEBUG', cast=bool, default=False)
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=lambda hosts: [h.strip() for h in hosts.split(',')], default='*,')
 
 
 # Application definition
@@ -121,6 +118,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/'
+MEDIA_URL = '/media/'
 
 # Add these new lines
 STATICFILES_DIRS = (
@@ -128,8 +126,42 @@ STATICFILES_DIRS = (
 )
 
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+MEDIA_ROOT = BASE_DIR / 'media'
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 SESSION_EXPIRE_AT_BROWSER_CLOSE=True
+
+redis_port = config('redis_port', cast=int, default=6379)
+
+CELERY_BROKER_URL = f"redis://localhost:{redis_port}"
+CELERY_RESULT_BACKEND = f"redis://localhost:{redis_port}"
+CELERY_ACCEPT_CONTENT = ["application/json"]
+CELERY_RESULT_SERIALIZER = "json"
+CELERY_TASK_SERIALIZER = "json"
+
+#for every hour 
+# 0 * * * *
+#for every hour at 30 min
+# 35 * * * *
+#for every hour 50 min
+# 50 * * * *
+CELERYBEAT_SCHEDULE = {
+    'retrive_tornado': {
+        'task': 'app.tasks.tornadow_warning',
+        'schedule': crontab(minute='0')
+    },
+    'retrive_flood': {
+        'task': 'app.tasks.flood_warning',
+        'schedule': crontab(minute='35')
+    },
+    'retrive_thunderstorm': {
+        'task': 'app.tasks.thunderstorm_warning',
+        'schedule': crontab(minute='50')
+    },
+}
+
+if not DEBUG:
+    from .settings_prod import *

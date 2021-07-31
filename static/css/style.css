@@ -489,3 +489,39 @@ a.weather-info.hashtag .map {
         font-size: 2rem;
     }
 }
+
+.suggestions {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    text-align: center;
+
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 10px;
+}
+.suggestions .suggestion {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 8px;
+    background-color: transparent;
+    color: #26DDDA;
+    border: 3px solid #2FABE5;
+    padding: 10px;
+}
+.suggestions .suggestion span {
+    font-weight: bold;
+    margin: 0 auto;
+    color: #2FABE5;
+}
+
+.help {
+    font-size: 14px;
+    color: #2FABE5;
+}
+.help b {
+    color: #26DDDA;
+}
