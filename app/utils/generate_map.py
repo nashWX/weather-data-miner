@@ -43,7 +43,10 @@ def generate_map(lats:float, lons:float, place_id:str):
 
         x,y = m(lons, lats)
 
-        m.drawcoastlines(color='aqua', linewidth=1)
+        try:
+            m.drawcoastlines(color='aqua', linewidth=1)
+        except Exception as e:
+            print(f'coastlines not found {e} ')
         m.drawcountries(color='aqua', linewidth=1)
         m.drawstates(color='aqua', linewidth=2)
         m.drawrivers(color='teal', linewidth=0.9)
