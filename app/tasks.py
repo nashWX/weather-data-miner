@@ -56,8 +56,8 @@ def update_population():
 
 
 @shared_task
-def update_hash_tag(name):
-    asyncio.run(get_hashtag(name))
+def update_hash_tag():
+    asyncio.run(get_hashtag())
 
 
 async def update_missing_pouplation():

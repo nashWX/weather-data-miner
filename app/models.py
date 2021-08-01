@@ -187,8 +187,8 @@ post_save.connect(add_map_to_location, sender=Location)
 
 def add_post_count_hashtag(sender, instance, **kwargs):
     try:
-        if not instance.post:
-            celery.current_app.send_task('app.tasks.update_hash_tag', [instance.name])
+        print(instance)
+        celery.current_app.send_task('app.tasks.update_hash_tag')
     except Exception as e:
         print(e)
 post_save.connect(add_post_count_hashtag, sender=HashTag)
