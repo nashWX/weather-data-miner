@@ -44,6 +44,7 @@ class Location(models.Model):
     lng = models.CharField(
         verbose_name="Longitude", null=True, max_length=50, blank=True
     )
+    can_retrive_population = models.BooleanField(verbose_name='can retrive population', default=True)
 
     def __str__(self):
         return self.name
@@ -177,7 +178,8 @@ class HashTag(models.Model):
 
 def add_map_to_location(sender, instance, **kwargs):
     try:
-        celery.current_app.send_task('app.tasks.update_location_map', [instance.id])
+        if not instance.location_map:
+            celery.current_app.send_task('app.tasks.update_location_map', [instance.id])
     except Exception as e:
         print(e)
 post_save.connect(add_map_to_location, sender=Location)
@@ -185,7 +187,8 @@ post_save.connect(add_map_to_location, sender=Location)
 
 def add_post_count_hashtag(sender, instance, **kwargs):
     try:
-        celery.current_app.send_task('app.tasks.update_hash_tag', [instance.name])
+        if not instance.post:
+            celery.current_app.send_task('app.tasks.update_hash_tag', [instance.name])
     except Exception as e:
         print(e)
 post_save.connect(add_post_count_hashtag, sender=HashTag)

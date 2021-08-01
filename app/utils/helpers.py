@@ -42,15 +42,21 @@ async def get_population(location, page):
 async def get_population_from_wiki(name, page):
     try:
         url = f"https://en.wikipedia.org/wiki/{name.replace(' ', '_')}"
-        await page.goto(url,{"waitUntil": "load"})
+        await page.goto(url, {"waitUntil": "load"})
 
         result = await page.evaluate("""() => {
             const trList = document.querySelectorAll('table.infobox.geography tr');
-            for (let i in trList) {
-                if(trList[i]?.textContent?.includes('Population')) {
-                    return trList[i+1]?.textContent?.replaceAll(/\D/g, '');
+            let pop = null;
+            if (trList) {
+                for (let i in trList) {
+                    if(trList[Number(i)] && trList[Number(i)].textContent && trList[Number(i)+1] && trList[Number(i)+1].textContent &&  trList[Number(i)].textContent.includes('Population')) {
+                        pop = trList[Number(i)+1].textContent.replace(/\D/g, '');
+                        break;
+                    }
                 }
             }
+
+            return pop;
         }""")
 
         if result:

@@ -161,6 +161,14 @@ CELERYBEAT_SCHEDULE = {
         'task': 'app.tasks.thunderstorm_warning',
         'schedule': crontab(minute='50')
     },
+    'update_population': {
+        'task': 'app.tasks.update_population',
+        'schedule': crontab(minute='20', hour='*/2')
+    },
+    'update_empty_map': {
+        'task': 'app.tasks.update_empty_map',
+        'schedule': crontab(minute='30', hour='*/2')
+    },
 }
 
 if not DEBUG:
