@@ -95,10 +95,10 @@ async def get_location(location, page):
     return None
 
 
-async def login(page):
+async def login(page, username='mahmudursiam'):
     try:
-        if Path(getCookiePath()/'cookie.json').is_file():
-            async with aiofiles.open(getCookiePath()/'cookie.json','r') as f:
+        if Path(getCookiePath()/f'{username}.json').is_file():
+            async with aiofiles.open(getCookiePath()/f'{username}.json','r') as f:
                 cookies = await f.read()
                 cookieObject = json.loads(cookies)
                 for cookie in cookieObject:
@@ -122,7 +122,7 @@ async def login(page):
             print('hurrray user is already logged in ')
             return True
         
-        username = config("insta_user", cast=str, default='motailab')
+        username = username or config("insta_user", cast=str, default='motailab')
         password = config("insta_password", cast=str, default='12Mobile')
 
         await page.waitForSelector('input[name="username"]')
@@ -141,7 +141,7 @@ async def login(page):
             ]
         )
 
-        async with aiofiles.open(getCookiePath()/'cookie.json','w') as f:
+        async with aiofiles.open(getCookiePath()/f'{username}.json','w') as f:
             cookieObject = await page.cookies()
             await f.write(json.dumps(cookieObject))
     

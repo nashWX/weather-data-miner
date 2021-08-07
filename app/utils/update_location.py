@@ -1,16 +1,14 @@
 import asyncio
 from pyppeteer import launch
-from pathlib import Path
 from asgiref.sync import sync_to_async
-from ..models import Location, Warning
+from ..models import Warning
 from .helpers import (
     userAgent,
     login,
-    get_population,
     get_location
 )
 
-async def update_location(places: list = [], warning_type: str = ""):
+async def update_location():
     browser = await launch({
         "headless": True,
          'args': [
@@ -29,42 +27,25 @@ async def update_location(places: list = [], warning_type: str = ""):
     page = await browser.newPage()
     await page.setUserAgent(userAgent)
     await login(page)
-    warnings = await sync_to_async(Warning.objects.filter)(warning_type=warning_type)
-    await sync_to_async(warnings.delete)()
-
-    for place in places:
+    warnings = await sync_to_async(Warning.objects.select_related)('location')
+    warnings = await sync_to_async(warnings.filter)(location__location_id__isnull=True)
+    warningList = await sync_to_async(list)(warnings)
+    for warning in warningList[:20]:
         try:
-            name = place[0] + ", " + place[1]
-            start_time = place[2]
-            end_time = place[3]
-            loc = None
-            result = await sync_to_async(Location.objects.filter)(name=name)
-            if not await sync_to_async(result.exists)():
-                place_data = await get_location(name, page)
-                if place_data:
-                    location = Location(name=name, city_name=place[0], state_name=place[1])
-                    location.location_id = f"{place_data['location']['facebook_places_id']}"
-                    location.lng = f"{place_data['location']['lng']}"
-                    location.lat = f"{place_data['location']['lat']}"
-                    location.population = await get_population(name, page)
-                    await sync_to_async(location.save)()
-                    loc = location
-            else:
-                loc = result[0]
-
-            if loc:
-                await sync_to_async(Warning.objects.create)(
-                    location=loc,
-                    start_time=start_time,
-                    end_time=end_time,
-                    warning_type=warning_type,
-                )
- 
+            place_data = await get_location(warning.location.name, page)
+            if place_data:
+                print(place_data['location']['facebook_places_id'])
+                warning.location.location_id = f"{place_data['location']['facebook_places_id']}"
+                await sync_to_async(warning.location.save)()
         except Exception as e:
             print("error ", e)
+
     await page.close()
     await browser.close()
 
+
+def main():
+    asyncio.run(update_location())
 
 if __name__ == "__main__":
     asyncio.run(update_location())

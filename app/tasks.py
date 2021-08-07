@@ -5,6 +5,7 @@ from pyppeteer import launch
 from django.db.models import Q
 from asgiref.sync import sync_to_async
 from .models import Location
+from .utils.update_location import update_location
 from .utils.get_hashtag import get_hashtag
 from .utils.retrive_warnings import retrieveWarnings
 from .utils.generate_map import generate_map
@@ -14,15 +15,18 @@ from .utils.helpers import (
 )
 @shared_task
 def tornadow_warning():
+    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
     asyncio.run(retrieveWarnings(event='TORNADO'))
 
 
 @shared_task
 def thunderstorm_warning():
+    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
     asyncio.run(retrieveWarnings(event='TSTORM'))
 
 @shared_task
 def flood_warning():
+    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
     asyncio.run(retrieveWarnings(event='FLOOD'))
 
 @shared_task
@@ -30,7 +34,7 @@ def update_location_map(id:int):
     try:
         location = Location.objects.get(id=id)
         if not location.location_map:
-            mapPath = generate_map(float(location.lat), float(location.lng), location.location_id)
+            mapPath = generate_map(float(location.lat), float(location.lng), location.location_id or '_'.join(location.name.lower().split(',')))
             location.location_map = mapPath
             location.save()
     except Exception as e:
@@ -43,7 +47,7 @@ def update_empty_map():
         locations = Location.objects.filter(location_map__isnull=True, lat__isnull=False, lng__isnull=False)
         for location in locations:
             if not location.location_map:
-                mapPath = generate_map(float(location.lat), float(location.lng), location.location_id)
+                mapPath = generate_map(float(location.lat), float(location.lng), location.location_id or '_'.join(location.name.lower().split(',')))
                 location.location_map = mapPath
                 location.save()
     except Exception as e:
@@ -59,6 +63,12 @@ def update_population():
 def update_hash_tag():
     asyncio.run(get_hashtag())
 
+@shared_task
+def update_missing_location():
+    try:
+        asyncio.run(update_location())
+    except Exception as e:
+        print(f'update_location error {e}')
 
 async def update_missing_pouplation():
     try:

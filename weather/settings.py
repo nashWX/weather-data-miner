@@ -73,10 +73,15 @@ WSGI_APPLICATION = 'weather.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': config('DB_NAME', cast=str),
+        'USER': config('DB_USER', cast=str),
+        'PASSWORD': config('DB_PASSWORD', cast=str),
+        'HOST': 'localhost',
+        'PORT': '',
     }
 }
 
@@ -142,32 +147,30 @@ CELERY_ACCEPT_CONTENT = ["application/json"]
 CELERY_RESULT_SERIALIZER = "json"
 CELERY_TASK_SERIALIZER = "json"
 
-#for every hour 
-# 0 * * * *
-#for every hour at 30 min
-# 35 * * * *
-#for every hour 50 min
-# 50 * * * *
 CELERYBEAT_SCHEDULE = {
     'retrive_tornado': {
         'task': 'app.tasks.tornadow_warning',
-        'schedule': crontab(minute='0')
+        'schedule': crontab(minute='*/10')
     },
     'retrive_flood': {
         'task': 'app.tasks.flood_warning',
-        'schedule': crontab(minute='35')
+        'schedule': crontab(minute='*/15')
     },
     'retrive_thunderstorm': {
         'task': 'app.tasks.thunderstorm_warning',
-        'schedule': crontab(minute='50')
+        'schedule': crontab(minute='*/20')
+    },
+    'update_location': {
+        'task': 'app.tasks.update_missing_location',
+        'schedule': crontab(minute='*/25')
     },
     'update_population': {
         'task': 'app.tasks.update_population',
-        'schedule': crontab(minute='20', hour='*/2')
+        'schedule': crontab(minute='0', hour='*/6')
     },
     'update_empty_map': {
         'task': 'app.tasks.update_empty_map',
-        'schedule': crontab(minute='30', hour='*/2')
+        'schedule': crontab(minute='30', hour='*/4')
     },
 }
 

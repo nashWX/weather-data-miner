@@ -14,13 +14,14 @@
                     <div class="col-xl-3 col-lg-4 col-md-6 col-12 px-0 mb-xs-4">
                         <a href="{{warning.location.insta_url}}" class="weather-info {{type}}" target="_blank">
                             <div class="time-stamp">
-                                <div class="starttime">{{ warning.start }}</div>
-                                <div class="endtime">{{ warning.end }}</div>
+                                <div class="starttime">{{ warning.start|safe }}</div>
+                                <div class="endtime">{{ warning.end|safe }}</div>
                             </div>
                             <div class="map">
-                                <img src="{{warning.location.location_map}}" alt="map">
+                                <!-- <img src="{{warning.location.location_map}}" alt="map"> -->
+                                <img src="/media/img/100240763351471_map.png" alt="map">
                             </div>
-                            <div class="population">{{ warning.location.population }}</div>
+                            <div class="population">{{ warning.location.popu }}</div>
                             <div class="locality">
                                 <p>{{warning.location.name|truncatechars:18}}</p>
                             </div>
@@ -37,7 +38,7 @@
                             <div class="map">
                                 <div class="tagname">{{ hash.name }}</div>
                             </div>
-                            <div class="population">{{hash.post}}</div>
+                            <div class="population">{{hash.total_post}}</div>
                         </a>
                     </div>
                 {% endfor %}

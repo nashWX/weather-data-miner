@@ -49,6 +49,13 @@ class Location(models.Model):
     def __str__(self):
         return self.name
     
+
+    @property
+    def popu(self):
+        if self.population and self.population.isdigit():
+            return f'{int(self.population):,}'
+        return 'UNKNOWN'
+    
     @property
     def insta_url(self):
         return f"https://www.instagram.com/explore/locations/{self.location_id}"
@@ -91,14 +98,14 @@ class Warning(models.Model):
     def start(self):
         if self.start_time:
             local_dt = timezone.localtime(self.start_time, pytz.timezone(self.timezone))
-            return local_dt.strftime("%I:%M")
+            return f'{local_dt.strftime("%#I:%#M")}<p>{local_dt.strftime("%p")}</p>'
         return None
 
     @property
     def end(self):
         if self.end_time:
             local_dt = timezone.localtime(self.end_time, pytz.timezone(self.timezone))
-            return local_dt.strftime("%I:%M")
+            return f'{local_dt.strftime("%#I:%#M")}<p>{local_dt.strftime("%p")}</p>'
         return None
     
     @property
@@ -169,6 +176,12 @@ class HashTag(models.Model):
 
 
     @property
+    def total_post(self):
+        if self.post:
+            return f'{int(self.post):,}'
+        return '...'
+    
+    @property
     def url(self):
         return f'https://www.instagram.com/explore/tags/'+self.name
 
@@ -187,8 +200,8 @@ post_save.connect(add_map_to_location, sender=Location)
 
 def add_post_count_hashtag(sender, instance, **kwargs):
     try:
-        print(instance)
-        celery.current_app.send_task('app.tasks.update_hash_tag')
+        if not instance.post:
+            celery.current_app.send_task('app.tasks.update_hash_tag')
     except Exception as e:
         print(e)
 post_save.connect(add_post_count_hashtag, sender=HashTag)

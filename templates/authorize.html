@@ -10,7 +10,7 @@
                 {% endfor %}
             {% endif %}
         </div>
-        <div class="col-12 vh-100 d-flex align-items-center justify-content-center">
+        <div class="col-12 min-vh-100 d-flex align-items-center justify-content-center">
             <div class="form-container">
                 <form class="loginform text-center" method="POST" action="{% url 'authorize' %}">
                     {% csrf_token %}
@@ -33,33 +33,15 @@
                         <button class="enter" type="submit">Enter</button>
                     </div>
                     <div class="suggestions-time">
-                        <p class="help">
-                           Manually Enter a range or select a range from choice below
+                        <p class="help text-uppercase">
+                           Manually enter a range or select a choice from below
                         </p>
                         <div class="suggestions">
                             {% for suggestion in suggestions %}
-                                <button class="suggestion" type="button" data-rangeloc="{{suggestion.local}}_{{end_local}}" data-rangeiso="{{suggestion.utc}}_{{end_utc}}">
+                                <button class="suggestion text-uppercase" type="button" data-rangeloc="{{suggestion.local}}_{{end_local}}" data-rangeiso="{{suggestion.utc}}_{{end_utc}}">
                                     {{suggestion.title}}
                                 </button>
                             {% endfor %}
-
-                            {% comment %}
-                                {% for t in tornados %}
-                                        <button class="suggestion" type="button" data-rangeloc="{{t.start.local_start}}_{{t.end.local_end}}" data-rangeiso="{{t.start.iso_start}}_{{t.end.iso_end}}">
-                                            {{t.start.local_start}} <span>T</span> {{t.end.local_end}}
-                                        </button>
-                                {% endfor %}
-                                    {% for t in floods %}
-                                        <button class="suggestion" type="button" data-rangeloc="{{t.start.local_start}}_{{t.end.local_end}}" data-rangeiso="{{t.start.iso_start}}_{{t.end.iso_end}}">
-                                            {{t.start.local_start}} <span>F</span> {{t.end.local_end}}
-                                        </button>
-                                {% endfor %}
-                                    {% for t in tstorms %}
-                                        <button class="suggestion" type="button" data-rangeloc="{{t.start.local_start}}_{{t.end.local_end}}" data-rangeiso="{{t.start.iso_start}}_{{t.end.iso_end}}">
-                                            {{t.start.local_start}} <span>S</span> {{t.end.local_end}}
-                                        </button>
-                                {% endfor %}
-                           {% endcomment %}
                         </div>
                     </div>
                 </form>
@@ -96,6 +78,7 @@
             if(starttime  && endtime) {
                 starttime.value = iso.split('_')[0];
                 endtime.value = iso.split('_')[1];
+                console.log(starttime.nextElementSibling)
                 starttime.nextElementSibling.value = local.split('_')[0];
                 endtime.nextElementSibling.value = local.split('_')[1];
             }

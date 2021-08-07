@@ -9,6 +9,7 @@ DATABASES = {
         'PASSWORD': config('DB_PASSWORD', cast=str),
         'HOST': 'localhost',
         'PORT': '',
+        'CONN_MAX_AGE': 600,
     }
 }
 

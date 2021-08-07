@@ -1,5 +1,6 @@
 import re
 import os
+from app.models import Location, Warning
 import pytz
 import asyncio
 import datetime as dt
@@ -8,8 +9,6 @@ from asgiref.sync import sync_to_async
 import aiofiles
 import aiohttp
 from bs4 import BeautifulSoup
-# from app.models import Location, Warning
-from .update_location import update_location
 
 
 os.environ["DJANGO_ALLOW_ASYNC_UNSAFE"] = "true"
@@ -45,30 +44,26 @@ async def retrieveWarnings(event='TORNADO'):
             else:
                 a = await resp.json()
                 tornadowarnings = a['features']
-        
     # Loop through every warning.
     given_tornado_places = []
     for warning in tornadowarnings:
-
         if not warning['properties']['messageType']=='Alert':
             continue # Not interested in updates or cancels, just alerts.
-        
         # 2. Get warning times, given in local time so need to convert to UTC
         if not warning['properties']['effective'] or not warning['properties']['ends']:
             continue
-        
         
         warningStart = warning['properties']['effective']
         warningEnd = warning['properties']['ends']
         warning_start = local_to_UTC(warningStart)
         warning_end = local_to_UTC(warningEnd)
         current_time =  dt.datetime.now(tz=dt.timezone.utc) - dt.timedelta(days=1)
+        warning_delete_end =  dt.datetime.now(tz=dt.timezone.utc) - dt.timedelta(days=3)
   
        
         if current_time > warning_end:
             continue        
         
-        print(f"current time {current_time} warnig endtime {warning_end} { current_time > warning_end}")
         # 3. Retrieve ifno from warning. 
         # County info returns string: County1, State ID1; County2, StateID2 etc 
         county = warning['properties']['areaDesc']
@@ -87,7 +82,6 @@ async def retrieveWarnings(event='TORNADO'):
             location_text = warning_text_split[1].replace("\n"," ")
         else:
             location_text = warning_text_split[0].replace("\n"," ")
-
         # Use regex to find possible places. The format should be
         #  - Preceded by a space (or linebreak as theses are now spaces), gets 
         #      rid of some unneccessary words.
@@ -110,18 +104,29 @@ async def retrieveWarnings(event='TORNADO'):
         state = [k for k,v in us_states.items() if v == state_abbr]
         # startTimeStr = warning_start.strftime("%Y%m%d%H%M")
         # endTimeStr = warning_end.strftime("%Y%m%d%H%M")
+        warnings = await sync_to_async(Warning.objects.filter)(warning_type=event, end_time__lte=warning_delete_end)
+        await sync_to_async(warnings.delete)()
         for p in places:
-            place_dets = [p,state[0],warning_start,warning_end]
-            given_tornado_places.append(place_dets)
+            # place_dets = [p,state[0],warning_start,warning_end]
+            # given_tornado_places.append(place_dets)
+            filters = await sync_to_async(Location.objects.filter)(city_name__iexact=p, state_name__iexact=state[0])
+            location = await sync_to_async(filters.first)()
+            if location:
+                obj, created = await sync_to_async(Warning.objects.get_or_create)(
+                    location=location,
+                    start_time=warning_start,
+                    end_time=warning_end,
+                    warning_type=event,
+                )
+                if created:
+                    print(f'{location} -> {warning_start} -> {warning_end}')
+                    await sync_to_async(obj.save)()
     
-    if len(given_tornado_places)==0:
-        print(f'No {event} warnings found from last 24 hours')
-    else:
-        await update_location(given_tornado_places, event)
+    # if len(given_tornado_places)==0:
+    #     print(f'No {event} warnings found from last 24 hours')
+    # else:
+    #     await update_location(given_tornado_places, event)
         
-    # valid_places = []
-    # for tornado_place in given_tornado_places:
-    #     pass
 
     # all_warnings = await sync_to_async(Warning.objects.filter)(warning_type=event)
     # await sync_to_async(all_warnings.delete)()
@@ -157,6 +162,13 @@ async def check_place(place, counties,us_states):
     in the list.
     If True then the place name will be noted.
     '''
+    place = place.strip().lower().strip('.')
+    filters = await sync_to_async(Location.objects.filter)(city_name__icontains=place, name__icontains=place)
+    if await sync_to_async(filters.exists)():
+        return True
+    else:
+        return False
+    
     split_counties = counties.split(';')
     county_list = []
     state_abr_list = []
@@ -169,7 +181,6 @@ async def check_place(place, counties,us_states):
     for c in split_counties:
         [count,state] = c.split(',')
         county_list.append(count.strip()); state_abr_list.append(state.strip())
-    place = place.strip().lower().strip('.')
     # First check if in allowed places (see 5.4 below). I have moved this to 
     # check 1 as it means exceptions to the rules can just be added to 
     # allowed_places.txt. Same with flagged places, no point doing all other 
@@ -311,7 +322,7 @@ def local_to_UTC(time_string):
 
 
 def main():
-    asyncio.run(retrieveWarnings('FLOOD'))
+    asyncio.run(retrieveWarnings('TSTORM'))
     
 if __name__=='__main__':
     main()
