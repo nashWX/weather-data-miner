@@ -98,14 +98,14 @@ class Warning(models.Model):
     def start(self):
         if self.start_time:
             local_dt = timezone.localtime(self.start_time, pytz.timezone(self.timezone))
-            return f'{local_dt.strftime("%#I:%#M")}<p>{local_dt.strftime("%p")}</p>'
+            return f'{local_dt.strftime("%-I:%-M")}<p>{local_dt.strftime("%p")}</p>'
         return None
 
     @property
     def end(self):
         if self.end_time:
             local_dt = timezone.localtime(self.end_time, pytz.timezone(self.timezone))
-            return f'{local_dt.strftime("%#I:%#M")}<p>{local_dt.strftime("%p")}</p>'
+            return f'{local_dt.strftime("%-I:%-M")}<p>{local_dt.strftime("%p")}</p>'
         return None
     
     @property
