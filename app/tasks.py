@@ -15,18 +15,15 @@ from .utils.helpers import (
 )
 @shared_task
 def tornadow_warning():
-    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
     asyncio.run(retrieveWarnings(event='TORNADO'))
 
 
 @shared_task
 def thunderstorm_warning():
-    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
     asyncio.run(retrieveWarnings(event='TSTORM'))
 
 @shared_task
 def flood_warning():
-    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
     asyncio.run(retrieveWarnings(event='FLOOD'))
 
 @shared_task
