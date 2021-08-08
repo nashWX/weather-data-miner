@@ -160,8 +160,8 @@ CELERYBEAT_SCHEDULE = {
         'task': 'app.tasks.thunderstorm_warning',
         'schedule': crontab(minute='*/20')
     },
-    'update_location': {
-        'task': 'app.tasks.update_missing_location',
+    'update_location_location_id': {
+        'task': 'app.tasks.update_missing_location_id',
         'schedule': crontab(minute='*/25')
     },
     'update_population': {

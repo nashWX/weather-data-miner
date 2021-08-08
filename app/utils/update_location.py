@@ -24,21 +24,26 @@ async def update_location():
             #'--single-process',
         ],
     })
-    page = await browser.newPage()
-    await page.setUserAgent(userAgent)
-    await login(page)
-    warnings = await sync_to_async(Warning.objects.select_related)('location')
-    warnings = await sync_to_async(warnings.filter)(location__location_id__isnull=True)
-    warningList = await sync_to_async(list)(warnings)
-    for warning in warningList[:20]:
-        try:
-            place_data = await get_location(warning.location.name, page)
-            if place_data:
-                print(place_data['location']['facebook_places_id'])
-                warning.location.location_id = f"{place_data['location']['facebook_places_id']}"
-                await sync_to_async(warning.location.save)()
-        except Exception as e:
-            print("error ", e)
+
+    try:
+        page = await browser.newPage()
+        await page.setUserAgent(userAgent)
+        await login(page, 'islamahsan62')
+        warnings = await sync_to_async(Warning.objects.select_related)('location')
+        warnings = await sync_to_async(warnings.filter)(location__location_id__isnull=True)
+        warnings = await sync_to_async(warnings.order_by)('-id')
+        warningList = await sync_to_async(list)(warnings)
+        for warning in warningList[:20]:
+            try:
+                place_data = await get_location(warning.location.name, page)
+                if place_data:
+                    print(place_data['location']['facebook_places_id'])
+                    warning.location.location_id = f"{place_data['location']['facebook_places_id']}"
+                    await sync_to_async(warning.location.save)()
+            except Exception as e:
+                print("error ", e)
+    except Exception as e:
+        print(f'Exception fetching missing location id')
 
     await page.close()
     await browser.close()

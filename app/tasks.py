@@ -61,7 +61,7 @@ def update_hash_tag():
     asyncio.run(get_hashtag())
 
 @shared_task
-def update_missing_location():
+def update_missing_location_id():
     try:
         asyncio.run(update_location())
     except Exception as e:
