@@ -58,7 +58,7 @@ async def retrieveWarnings(event='TORNADO'):
         warning_start = local_to_UTC(warningStart)
         warning_end = local_to_UTC(warningEnd)
         current_time =  dt.datetime.now(tz=dt.timezone.utc) - dt.timedelta(days=1)
-        warning_delete_end =  dt.datetime.now(tz=dt.timezone.utc) - dt.timedelta(days=3)
+        warning_delete_end =  dt.datetime.now(tz=dt.timezone.utc) - dt.timedelta(days=2)
   
        
         if current_time > warning_end:
