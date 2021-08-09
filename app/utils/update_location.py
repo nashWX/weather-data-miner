@@ -36,6 +36,8 @@ async def update_location():
         for warning in warningList[:20]:
             try:
                 place_data = await get_location(warning.location.name, page)
+                print(warning.location.name)
+                print(place_data['location']['facebook_places_id'])
                 if place_data:
                     print(place_data['location']['facebook_places_id'])
                     warning.location.location_id = f"{place_data['location']['facebook_places_id']}"
