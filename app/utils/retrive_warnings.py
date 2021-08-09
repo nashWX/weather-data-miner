@@ -9,7 +9,8 @@ from asgiref.sync import sync_to_async
 import aiofiles
 import aiohttp
 from bs4 import BeautifulSoup
-
+from dateutil.parser import isoparse
+from dateutil.tz import UTC
 
 os.environ["DJANGO_ALLOW_ASYNC_UNSAFE"] = "true"
 
@@ -314,10 +315,13 @@ def local_to_UTC(time_string):
     # Converts a time string given in the format of 
     # YYYY-mm-ddTHH:MM:SS+/-H*H*, where the +/- is the difference to UTC
     # Currently assumes that it is a time that is behind UTC.
-    time = dt.datetime.strptime(time_string[0:19],"%Y-%m-%dT%H:%M:%S")
-    utcdiff = time_string[19:22]
-    utctime = time + dt.timedelta(hours=int(utcdiff))
-    return pytz.utc.localize(utctime)
+    # time = dt.datetime.strptime(time_string[0:19],"%Y-%m-%dT%H:%M:%S")
+    # utcdiff = time_string[19:22]
+    # utctime = time + dt.timedelta(hours=int(utcdiff))
+    # return pytz.utc.localize(utctime)
+    dt = isoparse(time_string)
+    return dt.astimezone(UTC)
+
 
 
 
