@@ -6,6 +6,7 @@ from .models import AccessPassword, Location, HashTag, Warning
 
 class LocationAdmin(admin.ModelAdmin):
     readonly_fields = ('location_map',)
+    search_fields = ['name', 'city_name']
 
 class WarningAdmin(admin.ModelAdmin):
     list_filter = ("start_time", "end_time", 'warning_type')
