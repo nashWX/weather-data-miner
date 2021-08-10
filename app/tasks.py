@@ -82,9 +82,9 @@ async def update_missing_pouplation():
         })
         page = await browser.newPage()
         await page.setUserAgent(userAgent)
-        locations = await sync_to_async(Location.objects.filter)((Q(population__isnull=True) | Q(population__iexact='unknown') & Q(can_retrive_population=True)))
+        locations = await sync_to_async(Location.objects.filter)((Q(population__isnull=True) | Q(population='') & Q(can_retrive_population=True)))
 
-        for location in locations:
+        for location in locations[:100]:
             population = await get_population_from_wiki(location.name, page)
             location.population = population
             location.can_retrive_population = False
