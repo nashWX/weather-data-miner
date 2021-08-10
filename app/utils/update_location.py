@@ -1,6 +1,7 @@
 import asyncio
 from pyppeteer import launch
 from asgiref.sync import sync_to_async
+from django.db.models import Q
 from ..models import Warning
 from .helpers import (
     userAgent,
@@ -30,7 +31,7 @@ async def update_location():
         await page.setUserAgent(userAgent)
         await login(page)
         warnings = await sync_to_async(Warning.objects.select_related)('location')
-        warnings = await sync_to_async(warnings.filter)(location__location_id__isnull=True)
+        warnings = await sync_to_async(warnings.filter)(Q(location__location_id__isnull=True) | Q(location__location_id=''))
         warnings = await sync_to_async(warnings.order_by)('-id')
         warningList = await sync_to_async(list)(warnings)
         print(f'found warning {len(warningList)}')
