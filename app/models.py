@@ -107,7 +107,7 @@ class Location(models.Model):
 
     @property
     def small(self):
-        name = f"{self.city_name},{self.states.get(self.state_name, self.state_name[0]+self.state_name[-1])}"
+        name = f"{self.city_name}, {self.states.get(self.state_name, self.state_name[0]+self.state_name[-1])}"
         return name
 
     @property
