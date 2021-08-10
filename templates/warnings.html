@@ -23,7 +23,10 @@
                             </div>
                             <div class="population">{{ warning.location.popu }}</div>
                             <div class="locality">
-                                <p>{{warning.location.name|truncatechars:18}}</p>
+                                <p>{{warning.location.small|truncatechars:20}}</p>
+                                {% comment %}
+                                    <p>{{warning.location.name|truncatechars:18}}</p>
+                                {% endcomment %}
                             </div>
                         </a>
                     </div>

@@ -1,10 +1,11 @@
 import pytz
-
+import os
 from django.db import models
 from django.db.models.signals import post_save
 from django.utils import timezone
 from decouple import config
 import celery
+
 # Create your models here.
 
 
@@ -16,6 +17,59 @@ class AccessPassword(models.Model):
 
 
 class Location(models.Model):
+    states = {
+        "Alabama": "AL",
+        "Alaska": "AK",
+        "Arizona": "AZ",
+        "Arkansas": "AR",
+        "California": "CA",
+        "Colorado": "CO",
+        "Connecticut": "CT",
+        "Delaware": "DE",
+        "District of Columbia": "DC",
+        "Florida": "FL",
+        "Georgia": "GA",
+        "Hawaii": "HI",
+        "Idaho": "ID",
+        "Illinois": "IL",
+        "Indiana": "IN",
+        "Iowa": "IA",
+        "Kansas": "KS",
+        "Kentucky": "KY",
+        "Louisiana": "LA",
+        "Maine": "ME",
+        "Maryland": "MD",
+        "Massachusetts": "MA",
+        "Michigan": "MI",
+        "Minnesota": "MN",
+        "Mississippi": "MS",
+        "Missouri": "MO",
+        "Montana": "MT",
+        "Nebraska": "NE",
+        "Nevada": "NV",
+        "New Hampshire": "NH",
+        "New Jersey": "NJ",
+        "New Mexico": "NM",
+        "New York": "NY",
+        "North Carolina": "NC",
+        "North Dakota": "ND",
+        "Ohio": "OH",
+        "Oklahoma": "OK",
+        "Oregon": "OR",
+        "Pennsylvania": "PA",
+        "Rhode Island": "RI",
+        "South Carolina": "SC",
+        "South Dakota": "SD",
+        "Tennessee": "TN",
+        "Texas": "TX",
+        "Utah": "UT",
+        "Vermont": "VT",
+        "Virginia": "VA",
+        "Washington": "WA",
+        "West Virginia": "WV",
+        "Wisconsin": "WI",
+        "Wyoming": "WY",
+    }
     name = models.CharField(
         verbose_name="Location name",
         max_length=255,
@@ -44,25 +98,32 @@ class Location(models.Model):
     lng = models.CharField(
         verbose_name="Longitude", null=True, max_length=50, blank=True
     )
-    can_retrive_population = models.BooleanField(verbose_name='can retrive population', default=True)
+    can_retrive_population = models.BooleanField(
+        verbose_name="can retrive population", default=True
+    )
 
     def __str__(self):
         return self.name
-    
+
+    @property
+    def small(self):
+        name = f"{self.city_name},{self.states.get(self.state_name, self.state_name[0]+self.state_name[-1])}"
+        return name
 
     @property
     def popu(self):
         if self.population and self.population.isdigit():
-            return f'{int(self.population):,}'
-        return 'UNKNOWN'
-    
+            return f"{int(self.population):,}"
+        return "UNKNOWN"
+
     @property
     def insta_url(self):
         return f"https://www.instagram.com/explore/locations/{self.location_id}"
 
 
 class Warning(models.Model):
-    timezone = config('timezone', default='America/New_York', cast=str)
+    timezone = config("timezone", default="America/New_York", cast=str)
+
     class WarningType(models.TextChoices):
         TORNADO = "TORNADO", "Tornado"
         FLOOD = (
@@ -98,16 +159,22 @@ class Warning(models.Model):
     def start(self):
         if self.start_time:
             local_dt = timezone.localtime(self.start_time, pytz.timezone(self.timezone))
-            return f'{local_dt.strftime("%-I:%M")}<p>{local_dt.strftime("%p")}</p>'
+            if os.name != 'nt':
+                return f'{local_dt.strftime("%-I:%M")}<p>{local_dt.strftime("%p")}</p>'
+            else:
+                return f'{local_dt.strftime("%#I:%M")}<p>{local_dt.strftime("%p")}</p>'
         return None
 
     @property
     def end(self):
         if self.end_time:
             local_dt = timezone.localtime(self.end_time, pytz.timezone(self.timezone))
-            return f'{local_dt.strftime("%-I:%M")}<p>{local_dt.strftime("%p")}</p>'
+            if os.name != 'nt':
+                return f'{local_dt.strftime("%-I:%M")}<p>{local_dt.strftime("%p")}</p>'
+            else:
+                return f'{local_dt.strftime("%#I:%M")}<p>{local_dt.strftime("%p")}</p>'
         return None
-    
+
     @property
     def iso_start(self):
         return self.start_time.isoformat()
@@ -116,47 +183,46 @@ class Warning(models.Model):
     def iso_end(self):
         return self.end_time.isoformat()
 
-
     @property
     def local_start(self):
         start = timezone.localtime(self.start_time, pytz.timezone(self.timezone))
-        return start.strftime('%Y-%m-%d %I:%M')
+        return start.strftime("%Y-%m-%d %I:%M")
 
     @property
     def local_end(self):
         end = timezone.localtime(self.end_time, pytz.timezone(self.timezone))
-        return end.strftime('%Y-%m-%d %I:%M')
-    
+        return end.strftime("%Y-%m-%d %I:%M")
 
     @staticmethod
-    def get_recent_warnings(_type='TORNADO'):
-        latest_warnings = Warning.objects.filter(warning_type=_type).order_by('-start_time')
+    def get_recent_warnings(_type="TORNADO"):
+        latest_warnings = Warning.objects.filter(warning_type=_type).order_by(
+            "-start_time"
+        )
         warnings = []
         count = 0
         for latest_warning in latest_warnings:
-            if all([latest_warning.start_time != warning.start_time and latest_warning.end_time > warning.start_time for warning in warnings]):
+            if all(
+                [
+                    latest_warning.start_time != warning.start_time
+                    and latest_warning.end_time > warning.start_time
+                    for warning in warnings
+                ]
+            ):
                 warnings.append(latest_warning)
-                count +=1
+                count += 1
             if count >= 10:
                 break
-        
+
         warning_suggestions = []
         for i in range(0, len(warnings)):
-            if len(warnings) > 1 and i < len(warnings)/2:
-                warning_suggestions.append({
-                    'start': warnings[i],
-                    'end': warnings[len(warnings)-(i+1)]
-                })
+            if len(warnings) > 1 and i < len(warnings) / 2:
+                warning_suggestions.append(
+                    {"start": warnings[i], "end": warnings[len(warnings) - (i + 1)]}
+                )
             if len(warnings) == 1:
-                 warning_suggestions.append({
-                    'start': warnings[0],
-                    'end': warnings[0]
-                })
+                warning_suggestions.append({"start": warnings[0], "end": warnings[0]})
 
         return warning_suggestions
-
-
-        
 
 
 class HashTag(models.Model):
@@ -174,16 +240,15 @@ class HashTag(models.Model):
         blank=True,
     )
 
-
     @property
     def total_post(self):
         if self.post:
-            return f'{int(self.post):,}'
-        return '...'
-    
+            return f"{int(self.post):,}"
+        return "..."
+
     @property
     def url(self):
-        return f'https://www.instagram.com/explore/tags/'+self.name
+        return f"https://www.instagram.com/explore/tags/" + self.name
 
     def __str__(self):
         return self.name
@@ -192,16 +257,20 @@ class HashTag(models.Model):
 def add_map_to_location(sender, instance, **kwargs):
     try:
         if not instance.location_map:
-            celery.current_app.send_task('app.tasks.update_location_map', [instance.id])
+            celery.current_app.send_task("app.tasks.update_location_map", [instance.id])
     except Exception as e:
         print(e)
+
+
 post_save.connect(add_map_to_location, sender=Location)
 
 
 def add_post_count_hashtag(sender, instance, **kwargs):
     try:
         if not instance.post:
-            celery.current_app.send_task('app.tasks.update_hash_tag')
+            celery.current_app.send_task("app.tasks.update_hash_tag")
     except Exception as e:
         print(e)
+
+
 post_save.connect(add_post_count_hashtag, sender=HashTag)
