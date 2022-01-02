@@ -15,7 +15,7 @@ from decouple import config
 from celery.schedules import crontab
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 import os
-GDAL_LIBRARY_PATH = ''
+# GDAL_LIBRARY_PATH = ''
 if os.name == 'nt':
     VENV_BASE = os.environ['VIRTUAL_ENV']
     os.environ['PATH'] = os.path.join(VENV_BASE, 'Lib/site-packages/osgeo') + ';' + os.environ['PATH']
