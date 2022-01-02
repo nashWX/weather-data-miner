@@ -23,6 +23,7 @@ async def get_hashtag():
             '--deterministic-fetch',
             '--disable-features=IsolateOrigins',
             '--disable-site-isolation-trials'],
+            'headless': True,
         })
         page = await browser.newPage()
         await page.setUserAgent(userAgent)

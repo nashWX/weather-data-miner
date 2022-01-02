@@ -14,6 +14,15 @@ from pathlib import Path
 from decouple import config
 from celery.schedules import crontab
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
+import os
+
+if os.name == 'nt':
+    VENV_BASE = os.environ['VIRTUAL_ENV']
+    os.environ['PATH'] = os.path.join(VENV_BASE, 'Lib/site-packages/osgeo') + ';' + os.environ['PATH']
+    os.environ['PROJ_LIB'] = os.path.join(VENV_BASE, 'Lib/site-packages/osgeo/data/proj') + ';' + os.environ['PATH']
+    
+GDAL_LIBRARY_PATH = os.path.join(VENV_BASE, 'Lib/site-packages/osgeo/gdal303.dll')
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
@@ -34,6 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.gis',
     'app',
 ]
 
@@ -150,29 +160,38 @@ CELERY_TASK_SERIALIZER = "json"
 CELERYBEAT_SCHEDULE = {
     'retrive_tornado': {
         'task': 'app.tasks.tornadow_warning',
-        'schedule': crontab(minute='*/10')
+        'schedule': crontab(minute='*/5')
     },
     'retrive_flood': {
         'task': 'app.tasks.flood_warning',
-        'schedule': crontab(minute='*/15')
+        'schedule': crontab(minute='*/8')
     },
     'retrive_thunderstorm': {
         'task': 'app.tasks.thunderstorm_warning',
-        'schedule': crontab(minute='*/20')
+        'schedule': crontab(minute='*/10')
     },
-    'update_location_location_id': {
-        'task': 'app.tasks.update_missing_location_id',
-        'schedule': crontab(minute='*/25')
-    },
-    'update_population': {
-        'task': 'app.tasks.update_population',
-        'schedule': crontab(minute='0', hour='*/6')
-    },
-    'update_empty_map': {
-        'task': 'app.tasks.update_empty_map',
-        'schedule': crontab(minute='30', hour='*/4')
-    },
+    # 'update_location_location_id': {
+    #     'task': 'app.tasks.update_missing_location_id',
+    #     'schedule': crontab(minute='*/25')
+    # },
+    # 'update_population': {
+    #     'task': 'app.tasks.update_population',
+    #     'schedule': crontab(minute='0', hour='*/6')
+    # },
+    # 'update_empty_map': {
+    #     'task': 'app.tasks.update_empty_map',
+    #     'schedule': crontab(minute='30', hour='*/4')
+    # },
 }
+
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': 'redis://127.0.0.1:6379',
+    }
+}
+
 
 if not DEBUG:
     from .settings_prod import *

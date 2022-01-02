@@ -1,19 +1,60 @@
+import json
 import pytz
 import os
+from django.db.models import Q
 from django.db import models
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, pre_save
 from django.utils import timezone
+from django.contrib.gis.geos import Polygon, MultiPolygon, Point
 from decouple import config
 import celery
 
 # Create your models here.
+# from django.db.models import F
+# from django.db.models.functions import ACos, Cos, Radians, Sin
+
+# locations = Location.objects.annotate(
+#     distance_miles = ACos(
+#         Cos(
+#             Radians(42.067203)
+#         ) * Cos(
+#             Radians(F('lat'))
+#         ) * Cos(
+#             Radians(F('lng')) - Radians(-72.505565)
+#         ) + Sin(
+#             Radians(42.067203)
+#         ) * Sin(Radians(F('lat')))
+#     ) * 3959
+# ).order_by('distance_miles')[:10]
 
 
 class AccessPassword(models.Model):
-    password = models.CharField(verbose_name="Access Password", max_length=12)
 
+    class CoordinateType(models.TextChoices):
+        MULTI_POLYGON = 'MultiPolygon', 'MultiPolygon'
+        POLYGON = 'Polygon', 'Polygon',
+        POINT = 'Point', 'Point'
+
+    password = models.CharField(verbose_name="Access Password", max_length=12)
+    coordinates = models.JSONField(verbose_name='Location Coordinates', null=True)
+    lat = models.FloatField(verbose_name='Latitude center of coordinates', max_length=24, null=True)
+    long = models.FloatField(verbose_name='Longitude center of coordinates', max_length=24, null=True)
+    coordinate_type = models.CharField(
+        max_length=20,
+        choices=CoordinateType.choices,
+        default=CoordinateType.MULTI_POLYGON,
+        verbose_name='Coordinate Type'
+    )
+    nearby_locations = models.JSONField(null=True, blank=True, verbose_name='All the locations inside the coordinates')
+
+    @property
+    def locations(self):
+        if self.nearby_locations:
+            return json.loads(self.nearby_locations)
+        return []
+    
     def __str__(self) -> str:
-        return "Access password for UI"
+        return f"{self.lat}<>{self.long} ({self.coordinate_type})"
 
 
 class Location(models.Model):
@@ -92,10 +133,10 @@ class Location(models.Model):
     location_map = models.CharField(
         verbose_name="Location map", max_length=300, null=True
     )
-    lat = models.CharField(
+    lat = models.FloatField(
         verbose_name="Latitude", null=True, max_length=50, blank=True
     )
-    lng = models.CharField(
+    lng = models.FloatField(
         verbose_name="Longitude", null=True, max_length=50, blank=True
     )
     can_retrive_population = models.BooleanField(
@@ -119,6 +160,7 @@ class Location(models.Model):
     @property
     def insta_url(self):
         return f"https://www.instagram.com/explore/locations/{self.location_id}"
+
 
 
 class Warning(models.Model):
@@ -223,6 +265,26 @@ class Warning(models.Model):
                 warning_suggestions.append({"start": warnings[0], "end": warnings[0]})
 
         return warning_suggestions
+    
+    @staticmethod
+    def get_warnings(_type='TORNADO', start_time=None, end_time=None, user=None):
+        q = Q(warning_type=_type) & (Q(start_time__gte=start_time) & Q(end_time__lte=end_time)) & Q(location__id__in=user.locations)
+        return Warning.objects.filter(q).order_by('-start_time')
+    
+    @property
+    def formated(self):
+        return {
+            "warning_type": self.warning_type.lower(),
+            "start": self.start,
+            "end": self.end,
+            "location": {
+                "name": self.location.small[:20],
+                "popu": self.location.popu,
+                "location_map": self.location.location_map,
+                "insta_url": self.location.insta_url,
+            }
+        }
+
 
 
 class HashTag(models.Model):
@@ -272,5 +334,29 @@ def add_post_count_hashtag(sender, instance, **kwargs):
     except Exception as e:
         print(e)
 
-
 post_save.connect(add_post_count_hashtag, sender=HashTag)
+
+
+def update_user_nearby_locations(sender, instance, **kwargs):
+    if instance.coordinates:
+        if not instance.pk:
+            update_coordinates(instance)
+        else:
+            item = AccessPassword.objects.filter(id=instance.pk)[0]
+            if (item.coordinates != instance.coordinates) or (item.coordinate_type != instance.coordinate_type) or not instance.nearby_locations:
+                update_coordinates(instance)
+
+            
+def update_coordinates(instance):
+    coordinates = json.loads(instance.coordinates)
+    locations = Location.objects.all()
+    if instance.coordinate_type == 'MultiPolygon':
+        mp = MultiPolygon([Polygon(pol[0]) for pol in coordinates])
+        nearby_locations = [location.id for location in locations if mp.contains(Point(location.lng, location.lat))]
+        instance.nearby_locations = json.dumps(nearby_locations)
+    elif instance.coordinate_type == 'Polygon':
+        poly = Polygon(coordinates[0])
+        nearby_locations = [location.id for location in locations if poly.contains(Point(location.lng, location.lat))]
+        instance.nearby_locations = json.dumps(nearby_locations)
+
+pre_save.connect(update_user_nearby_locations, sender=AccessPassword)

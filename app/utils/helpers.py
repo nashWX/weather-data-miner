@@ -95,7 +95,7 @@ async def get_location(location, page):
     return None
 
 
-async def login(page, username='mahmudursiam'):
+async def login(page, username=None):
     try:
         if Path(getCookiePath()/f'{username}.json').is_file():
             async with aiofiles.open(getCookiePath()/f'{username}.json','r') as f:
@@ -122,8 +122,8 @@ async def login(page, username='mahmudursiam'):
             print('hurrray user is already logged in ')
             return True
         
-        username = username or config("insta_user", cast=str, default='motailab')
-        password = config("insta_password", cast=str, default='12Mobile')
+        username = username or config("insta_user", cast=str)
+        password = config("insta_password", cast=str)
 
         await page.waitForSelector('input[name="username"]')
         await page.type('input[name="username"]', username)

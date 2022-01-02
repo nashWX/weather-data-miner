@@ -1,8 +1,10 @@
 import asyncio
-from asyncio.runners import run
+import os
+from datetime import datetime
 from celery import shared_task
 from pyppeteer import launch
 from django.db.models import Q
+from django.core.cache import cache
 from asgiref.sync import sync_to_async
 from .models import Location
 from .utils.update_location import update_location
@@ -15,15 +17,24 @@ from .utils.helpers import (
 )
 @shared_task
 def tornadow_warning():
+    if os.name == 'nt':
+        asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+    cache.set('tornado_last_update', datetime.now().strftime('%H:%M:%S'), None)
     asyncio.run(retrieveWarnings(event='TORNADO'))
 
 
 @shared_task
 def thunderstorm_warning():
+    if os.name == 'nt':
+        asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+    cache.set('tstorm_last_update', datetime.now().strftime('%H:%M:%S'), None)
     asyncio.run(retrieveWarnings(event='TSTORM'))
 
 @shared_task
 def flood_warning():
+    if os.name == 'nt':
+        asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+    cache.set('flood_last_update', datetime.now().strftime('%H:%M:%S'), None)
     asyncio.run(retrieveWarnings(event='FLOOD'))
 
 @shared_task
@@ -58,6 +69,8 @@ def update_population():
 
 @shared_task
 def update_hash_tag():
+    if os.name == 'nt':
+        asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
     asyncio.run(get_hashtag())
 
 @shared_task

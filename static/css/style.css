@@ -4,21 +4,47 @@ body {
     font-weight: 500;
     color: #ddd;
 }
+
+h1, h2, h3, h4, h5, h6 {
+    /* font-family: league-gothic, sans-serif; */
+    /* font-weight: 400; */
+    font-style: italic;
+}
+
+video#bg-video {
+    position: fixed;
+    min-width: 100%;
+    min-height: 100%;
+    z-index: -1;
+}
+
 img {
     max-width: 100%;
 }
 
-.form-container{
-    width: 570px;
+
+.form-container {
+    /* width: 570px;
     min-height: 350px;
+    background: linear-gradient(#14D4CF, #2FABE5);
     background: linear-gradient(#14D4CF, #2FABE5);
     padding: 1.5rem;
     border-radius: 1rem;
+    max-width: 100%; */
+
+    width: 570px;
+    min-height: 350px;
     max-width: 100%;
+    background: linear-gradient(rgb(20, 212, 207), rgb(47, 171, 229));
+    /* background: rgba(0,0,0,0.8); */
+    background: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)) padding-box, linear-gradient(to bottom, rgba(20, 212, 207, 0.8), rgba(47, 171, 229, 0.8)) border-box;
+    border-radius: 1rem;
+    border: 1.5rem solid transparent;
 }
+
 .loginform {
-    background: #000;
-    border-radius: 1.5rem;
+    /* background: #000; */
+    /* border-radius: 1.5rem; */
     width: 100%;
     height: 100%;
     padding: 1.5rem;
@@ -67,10 +93,231 @@ img {
     text-transform: uppercase;
 }
 
-.option-container{
+/***
+active report page styles
+***/
+.header-logo {
+    max-width: 100%;
+    height: 80px;
+    max-height: 100px;
+}
+
+.header-title, .header-subtitle {
+    font-size: 3.5rem;
+    text-transform: uppercase;
+    color: #14D4CF;
+    font-weight: bold;
+
+}
+
+.header-subtitle {
+    font-size: 1.6rem;
+    letter-spacing: 3px;
+}
+
+.nav {
+    border-top: 5px solid #63c4d6;
+    border-bottom: 5px solid #63c4d6;
+}
+
+.nav ul {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    list-style: none;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+.nav ul li a {
+    padding: 1px 1.5rem;
+    border-left: 3px solid #63c4d6;
+    border-right: 3px solid #63c4d6;
+    box-sizing: border-box;
+    display: inline-flex;
+    text-transform: uppercase;
+    font-size: 1rem;
+    font-weight: 500;
+    text-decoration: none;
+    color: #63c4d6;
+}
+
+.nav ul li:nth-child(2)>a {
+    border: none;
+}
+
+.report-page,
+.hashtag-page {
+    background-image: url(../img/report-page-bg.png);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    min-height: 79vh;
+}
+
+.hashtag-page {
+    background-image: url(../img/hashtag-page-bg.png);
+}
+
+.warning-map {
+    /* overflow: hidden; */
+    position: relative;
+    border: 15px solid #14D4CF;
+    border-radius: 1rem;
+    box-sizing: border-box;
+    z-index: 0;
+}
+
+.warning-map img {
+    max-width: 100%;
+    width: 100%;
+    height: 334px;
+    object-fit: cover;
+}
+
+.last-update {
+    position: absolute;
+    border: 4px solid #22D4CE;
+    background-color: #000;
+    text-align: center;
+    left: 37%;
+    top: -3.5rem;
+    z-index: 1;
+    padding: 0.2rem 1rem;
+    border-radius: 10px / 2px;
+}
+
+.last-update p,
+.last-update h5,
+.warning-label h5 {
+    margin: 0;
+    /* color: #2FABE5; */
+    color: #808080;
+    text-transform: uppercase;
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+.warning-label {
+    position: absolute;
+    top: -45px;
+    left: 30%;
+    background: #000;
+    border: 3px solid #22D4CE;
+    padding: 4px 8px;
+}
+
+.posts-container {
+    max-height: 600px;
+    overflow-y: scroll;
+    border: 10px solid #14D4CF;
+    background-color: #808080bb;
+    padding: 10px;
+}
+
+.report-title {
+    margin: 2rem 0;
+}
+
+.posts-label {
+    background: #000;
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    margin-bottom: 2rem;
+    border: 4px solid #22D4CE;
+}
+
+.posts-label h3 {
+    margin: 0;
+    color: #808080;
+    /* border: 4px solid #22D4CE; */
+}
+
+/* width */
+.posts-container::-webkit-scrollbar {
+    width: 12px;
+}
+
+/* Track */
+.posts-container::-webkit-scrollbar-track {
+    background: rgb(99, 97, 97);
+}
+
+/* Handle */
+.posts-container::-webkit-scrollbar-thumb {
+    background: rgb(54, 53, 53);
+    cursor: pointer;
+}
+
+/* Handle on hover */
+.posts-container::-webkit-scrollbar-thumb:hover {
+    background: rgb(54, 53, 53);
+}
+
+.report-page .weather-info::after,
+.hashtag-page .weather-info::after {
+    content: "";
+    position: absolute;
+    left: 5%;
+    top: 2px;
+    width: 90%;
+    height: 84%;
+    background-image: url(../img/location-hover-image.png);
+    z-index: 10000;
+    background-size: cover;
+    overflow: hidden;
+    background-clip: padding-box;
+    display: none;
+}
+
+.hashtag-page .weather-info::after {
+    background-image: url(../img/hashtag-hover-image.png);
+    left: 6%;
+    top: 12px;
+    width: 86%;
+    height: 80%;
+}
+
+.report-page .weather-info:hover::after,
+.hashtag-page .weather-info:hover::after {
+    display: block;
+}
+
+.report-page .weather-info.flood::after {
+    left: 9%;
+    width: 88%;
+    top: 9px;
+    height: 82%;
+}
+
+.report-page .weather-info.tstorm::after {
+    top: 6px;
+}
+
+.posts-container .weather-info.tstorm .locality,
+.posts-container .weather-info.tornado .locality,
+.posts-container .weather-info.flood .locality {
+    left: 0;
+    width: 100%;
+    text-align: center;
+}
+.posts-container .time-stamp {
+    left: 50px;
+}
+.posts-container .weather-info.tstorm .time-stamp{
+    left: 48px;
+}
+/***
+active report page styles end
+***/
+
+
+.option-container {
     width: 777px;
     margin: 0 auto;
 }
+
 .option-container form {
     width: 100%;
     display: grid;
@@ -90,6 +337,29 @@ img {
     background-color: #000;
     padding: 10px;
 }
+
+.subject-btn-update {
+    width: 100%;
+    position: relative;
+}
+
+.subject-btn-update.got-update::before {
+    content: "";
+    position: absolute;
+    left: -118px;
+    top: -15px;
+    background: url(../img/got-new-warning.png);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    width: 130px;
+    height: 115px;
+}
+
+.rounded-xl {
+    border-radius: 1rem;
+}
+
 .subject-btn .btn-content {
     background-color: #000;
     color: #14D4CF;
@@ -105,6 +375,16 @@ img {
     padding-left: 2.5rem;
     justify-content: start;
 }
+
+.subject-btn .btn-content:hover {
+    color: #A6FFCB;
+    background: linear-gradient(to right, #2f4739, #021312);
+}
+
+.subject-btn .btn-content:hover .no-report {
+    color: #A6FFCB;
+}
+
 .subject-btn .btn-content .icon {
     width: 80px;
     height: 80px;
@@ -134,30 +414,46 @@ img {
     margin: 1rem 0 1.5rem 0;
 }
 
+.home-logo {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 130px;
+    z-index: 1;
+}
+
+.mt-8 {
+    margin-top: 2rem;
+}
+
 .weather-info {
     width: 100%;
     height: 500px;
     position: relative;
     display: block;
 }
+
 .weather-info.tornado {
-   background: url(../img/tornadotemplate.png);
-   background-position: center;
-   background-repeat: no-repeat;
-   background-size: cover;
+    background: url(../img/tornadotemplate.png);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
 }
+
 .weather-info.tstorm {
     background: url(../img/tstormtemplate.png);
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
 }
+
 .weather-info.flood {
     background: url(../img/floodtemplate.png);
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
 }
+
 .weather-info.hashtag {
     background: url(../img/hashtagtemplate.png);
     background-position: center;
@@ -177,7 +473,7 @@ img {
     border-radius: 10px;
     border: 8px solid #63c4d6;
     background-color: #63c4d6;
-/* 
+    /* 
     background-color: red;
     border-color: red; */
 }
@@ -199,12 +495,13 @@ img {
     text-transform: uppercase;
 }
 
-.weather-info.tstorm .map{
+.weather-info.tstorm .map {
     top: 41.5%;
     left: 19.4%;
     width: 203px;
     height: 137px;
 }
+
 .weather-info.tornado .map {
     top: 41%;
     left: 19%;
@@ -231,15 +528,18 @@ a.weather-info.hashtag .map {
     font-size: 1rem;
     font-weight: 500;
 }
+
 .time-stamp p {
     font-size: 10px;
     margin: 0;
     line-height: 2px;
 }
+
 .weather-info.flood .time-stamp {
     left: 20%;
     width: 67%;
 }
+
 .population {
     position: absolute;
     bottom: 18%;
@@ -250,9 +550,11 @@ a.weather-info.hashtag .map {
     font-weight: 600;
     color: #40ABEA;
 }
+
 .weather-info.flood .population {
     padding-left: 7%;
 }
+
 .locality {
     position: absolute;
     bottom: 6.5%;
@@ -269,6 +571,7 @@ a.weather-info.hashtag .map {
     text-transform: uppercase;
     line-height: 19px;
 }
+
 .weather-info.flood .locality {
     left: 16%;
     bottom: 7.5%;
@@ -277,8 +580,9 @@ a.weather-info.hashtag .map {
 .hashtag .population {
     bottom: 19%;
 }
+
 .tstorm .population,
-.tornado .population{
+.tornado .population {
     bottom: 17%;
 }
 
@@ -292,6 +596,7 @@ a.weather-info.hashtag .map {
     grid-template-columns: repeat(1, 1fr);
     gap: 10px;
 }
+
 .suggestions .suggestion {
     display: flex;
     align-items: center;
@@ -304,6 +609,7 @@ a.weather-info.hashtag .map {
     border: 3px solid #2FABE5;
     padding: 10px;
 }
+
 .suggestions .suggestion span {
     font-weight: bold;
     margin: 0 auto;
@@ -314,11 +620,20 @@ a.weather-info.hashtag .map {
     font-size: 14px;
     color: #2FABE5;
 }
+
 .help b {
     color: #26DDDA;
 }
 
 @media screen and (max-width: 776px) {
+    .home-logo {
+        display: none;
+    }
+
+    .warning-map img {
+        height: 280px;
+    }
+
     .option-container {
         max-width: 100%;
         width: 100%;
@@ -343,119 +658,242 @@ a.weather-info.hashtag .map {
 }
 
 
-@media screen and (min-width:1199px) and (max-width: 1399px) { 
+@media screen and (min-width:1199px) and (max-width: 1399px) {
     .map {
         left: 19.2%;
     }
+
     .weather-info.tornado .map {
         left: 15%;
     }
+
     .weather-info.tstorm .map {
         left: 14.4%;
     }
+
     .weather-info.tornado .time-stamp {
         width: 78%;
         left: 12%;
     }
+
     .weather-info.tstorm .time-stamp {
         width: 78%;
         left: 11.2%;
     }
+
     .weather-info.tornado .locality {
         left: 10%;
     }
+
     .weather-info.tstorm .locality {
         left: 7%;
     }
-}
-@media screen and (min-width: 992px) and (max-width: 1198px) { 
-   .map {
-       left: 22%;
-   }
-   .weather-info.tstorm .map {
-       left: 18%;
-   }
-   .weather-info.tstorm .time-stamp {
-       left: 16%;
-   }
+
+    .report-page .subject-btn .btn-content {
+        font-size: 1.5rem;
+    }
 }
 
-@media screen and (min-width: 768px) and (max-width: 991px) { 
+@media screen and (min-width: 992px) and (max-width: 1198px) {
+    .map {
+        left: 22%;
+    }
+
+    .weather-info.tstorm .map {
+        left: 18%;
+    }
+
+    .weather-info.tstorm .time-stamp {
+        left: 16%;
+    }
+
+    .report-page .subject-btn .btn-content {
+        font-size: 1.1rem;
+    }
+
+    .last-update {
+        left: 32%;
+    }
+
+    .report-page .weather-info::after {
+        left: 3%;
+        top: 4px;
+        width: 95%;
+        height: 84%;
+    }
+
+    .report-page .weather-info.tstorm::after {
+        top: 6px;
+        left: 2%;
+        height: 83.5%;
+    }
+
+    .report-page .weather-info.flood::after {
+        left: 7%;
+        width: 93%;
+        top: 8px;
+        height: 82%;
+    }
+
+    .weather-info.hashtag::after {
+        left: 5%;
+        top: 12px;
+        width: 90%;
+        height: 80%;
+    }
+
+    .subject-btn-update {
+        width: 90%;
+        margin-left: auto;
+    }
+}
+
+@media screen and (min-width: 768px) and (max-width: 991px) {
     .time-stamp {
         left: 18%;
         width: 63.8%;
     }
+
     .weather-info.tstorm .map {
         top: 41.5%;
         left: 21.4%;
     }
+
     .weather-info.flood .map {
         top: 41%;
         left: 25.5%;
         width: 200px;
         height: 136px;
     }
+
     .weather-info.tornado .map {
         left: 21.2%;
     }
+
     .weather-info.flood .time-stamp {
         left: 23%;
         width: 61%;
     }
+
     .weather-info.tornado .time-stamp {
         left: 18.5%;
     }
+
     .weather-info.tstorm .locality {
         left: 15%;
     }
+
     .weather-info.flood .locality {
         left: 18%;
     }
+
     .weather-info.tornado .locality {
         left: 16%;
     }
+
+    .warning-label {
+        left: 28%;
+    }
+
+
+    .last-update {
+        left: 22%;
+    }
+
+    .report-page .weather-info::after {
+        left: 7%;
+        top: 1px;
+        width: 86%;
+        height: 84%;
+    }
+
+    .report-page .weather-info.tstorm::after {
+        top: 5px;
+        width: 85%;
+    }
+
+    .report-page .weather-info.flood::after {
+        left: 11%;
+        width: 84%;
+        top: 9px;
+    }
+
+    .weather-info.hashtag::after {
+        left: 8%;
+        top: 11px;
+        width: 83%;
+        height: 80%;
+    }
+
+    .report-page .subject-btn-update {
+        width: 90%;
+        margin-left: auto;
+    }
+
+    .subject-btn-update.got-update::before {
+        left: -36%;
+        top: -13px;
+        height: 90px;
+    }
 }
 
-@media screen and (max-width: 767px) { 
+@media screen and (max-width: 767px) {
+
     .mb-xs-4 {
         margin-bottom: 1rem;
     }
+
     .weather-info {
         height: 520px;
     }
+
     .time-stamp {
         left: 28%;
         width: 44%;
     }
+
     .weather-info.tstorm .map {
         top: 40.8%;
         left: 29%;
         width: 225px;
         height: 151px;
     }
+
     .weather-info.flood .map {
         top: 41%;
         left: 32%;
         width: 218px;
         height: 145px;
     }
+
     .weather-info.tornado .map {
         left: 29%;
         width: 226px;
         height: 148px;
     }
-    .weather-info.flood  .time-stamp {
+
+    .weather-info.flood .time-stamp {
         left: 30%;
         width: 44%;
     }
+
     .weather-info .locality {
         left: 27%;
         bottom: 5%;
     }
+
     .weather-info.flood .locality {
         left: 27%;
         bottom: 6.5%;
     }
+
+    .report-page .subject-btn {
+        width: 100%;
+    }
+    .subject-btn-update.got-update .icon {
+        border-color: red;
+    }
+
 }
 
 
@@ -463,41 +901,117 @@ a.weather-info.hashtag .map {
     .weather-info {
         height: 571px;
     }
+
     .weather-info.tstorm .map {
         top: 40.8%;
         left: 29%;
         width: 238px;
         height: 162px;
     }
+
     .weather-info.flood .map {
         top: 41%;
         left: 31%;
         width: 239px;
         height: 157px;
     }
+
     .weather-info.tornado .map {
         left: 29%;
         width: 245px;
         height: 161px;
     }
+
     .weather-info .locality {
         left: 22%;
         bottom: 6.5%;
     }
+
     .weather-info.flood .locality {
         left: 27%;
     }
+
     .weather-info.flood .time-stamp {
         left: 30%;
         width: 45%;
     }
+
     .section-title {
         font-size: 3rem;
     }
+
     .loginform h2 {
         font-size: 2.5rem;
     }
+
+    .header-subtitle {
+        font-size: 1.095rem;
+        letter-spacing: 1px;
+    }
+
+    .nav ul li a {
+        font-size: 1rem;
+        padding: 1px 8px;
+        border-width: 3px;
+    }
+
+    .nav ul li:last-child a {
+        border-right: none;
+        border-left: none;
+    }
+
+    .nav ul li:first-child a {
+        border-left: none;
+    }
+
+    .warning-label {
+        left: 27%;
+    }
+
+    .warning-map {
+        margin-top: 2rem;
+    }
+
+    .last-update {
+        left: 26.5%;
+    }
+
+    .subject-btn .btn-content {
+        font-size: 1.4rem;
+    }
+
+    .posts-container {
+        max-height: 100%;
+        overflow-y: initial;
+        border: none;
+        background-color: transparent;
+        padding: 0;
+    }
+
+    .report-page .weather-info::after {
+        left: 20%;
+        top: 2px;
+        width: 61%;
+        height: 84%;
+    }
+
+    .report-page .weather-info.tstorm::after {
+        width: 60%;
+    }
+
+    .report-page .weather-info.flood::after {
+        left: 22%;
+        width: 60%;
+    }
+
+    .weather-info.hashtag::after {
+        left: 21%;
+        top: 15px;
+        width: 57.5%;
+        height: 79%;
+    }
 }
+
 @media screen and (max-width: 450px) {
     .weather-info.flood .map {
         top: 41.4%;
@@ -505,112 +1019,349 @@ a.weather-info.hashtag .map {
         width: 234px;
         height: 153px;
     }
+
     .weather-info.tstorm .map {
         left: 22%;
         top: 41%;
         width: 235px;
         height: 161px;
     }
+
     .weather-info.tornado .map {
         width: 240px;
         height: 160px;
         left: 22%;
     }
+
     .weather-info.flood .time-stamp {
         left: 25%;
         width: 57%;
     }
+
     .weather-info.tornado .time-stamp {
         left: 23%;
         width: 55%;
     }
+
     .weather-info.tstorm .time-stamp {
         left: 23%;
         width: 55%;
     }
+
     .weather-info.flood .locality {
         left: 23%;
     }
+
     .weather-info.tornado .locality {
         left: 21%;
     }
+
     .weather-info.flood .locality {
         bottom: 7.5%;
     }
 
+    .report-page .weather-info::after {
+        left: 12%;
+        top: 2px;
+        width: 77%;
+        height: 84%;
+    }
+
+    .report-page .weather-info.tstorm::after {
+        top: 6px;
+        left: 11%;
+        width: 77%;
+    }
+
+    .report-page .weather-info.flood::after {
+        left: 15%;
+        width: 75%;
+    }
+
+    .weather-info.hashtag::after {
+        left: 13%;
+        top: 13px;
+        width: 73%;
+        height: 80%;
+    }
+}
+
+.weather-info.visited {
+    opacity: 0.5;
 }
 
 @media screen and (max-width: 375px) {
+    .subject-btn .btn-content {
+        font-size: 1.1rem;
+    }
+
     .weather-info.flood .time-stamp {
         left: 21%;
         width: 65%;
     }
+
     .weather-info.tstorm .time-stamp {
         left: 20%;
         width: 60%;
     }
+
     .weather-info.tornado .time-stamp {
         left: 19%;
         width: 64%;
     }
+
     .weather-info.flood .map {
         left: 22%;
         top: 41.4%;
         width: 230px;
         height: 154px;
     }
+
     .weather-info.tstorm .map {
         left: 18%;
     }
+
     .weather-info.tornado .map {
         top: 41%;
         left: 17%;
         width: 243px;
         height: 159px;
     }
+
     .weather-info.flood .locality,
     .weather-info.tstorm .locality,
     .weather-info.tornado .locality {
         left: 17%;
     }
+
     .loginform h2 {
         font-size: 2rem;
     }
+
+    .nav ul li a {
+        font-size: 12.5px;
+        padding: 1px 8px;
+        border-width: 1.5px;
+    }
+
+    .nav ul li:last-child a {
+        border-right: none;
+        border-left: none;
+    }
+
+    .nav ul li:first-child a {
+        border-left: none;
+    }
+
+    .last-update {
+        left: 24%;
+    }
+
+    .report-page .weather-info::after,
+    .report-page .weather-info.tstorm::after {
+        left: 6.5%;
+        width: 87%;
+    }
+
+    .report-page .weather-info.flood::after {
+        left: 10%;
+        width: 86%;
+    }
+
+    .weather-info.hashtag::after {
+        left: 8%;
+        top: 13px;
+        width: 83%;
+        height: 80%;
+    }
 }
+
 @media screen and (max-width: 320px) {
     .weather-info.flood .time-stamp {
         left: 16.5%;
         width: 75%;
     }
+
     .weather-info.tstorm .time-stamp {
         left: 15%;
         width: 70%;
     }
+
     .weather-info.tornado .time-stamp {
         left: 15%;
         width: 71%;
     }
-    .weather-info.flood .map{
+
+    .weather-info.flood .map {
         top: 41.4%;
         left: 18%;
         width: 229px;
         height: 153px;
     }
+
     .weather-info.tstorm .map {
         left: 13%;
     }
+
     .weather-info.tornado .map {
         left: 13%;
     }
+
     .weather-info.flood .locality {
         left: 15%;
     }
+
     .weather-info.tstorm .locality,
-    .weather-info.tornado .locality  {
+    .weather-info.tornado .locality {
         left: 12%;
     }
 
     .loginform h2 {
         font-size: 2rem;
     }
+
+    .nav ul li a {
+        padding: 1px 4px;
+    }
+
+    .warning-label {
+        left: 20%;
+    }
+
+    .last-update {
+        left: 18%;
+    }
+
+    .subject-btn .btn-content {
+        font-size: 14px;
+    }
+
+    .report-page .weather-info::after,
+    .report-page .weather-info.tstorm::after {
+        left: -4px;
+        width: 102.5%;
+    }
+
+    .report-page .weather-info.flood::after {
+        left: 1%;
+        width: 98%;
+        top: 10px;
+    }
+
+    .weather-info.hashtag::after {
+        left: 1%;
+        top: 14px;
+        height: 80%;
+        width: 97%;
+    }
+
+    .weather-info.flood {
+        background-position: 54%;
+    }
 }
+
+.lds-roller {
+    display: inline-block;
+    position: relative;
+    width: 80px;
+    height: 80px;
+}
+
+.lds-roller div {
+    animation: lds-roller 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+    transform-origin: 40px 40px;
+}
+
+.lds-roller div:after {
+    content: " ";
+    display: block;
+    position: absolute;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #dfc;
+    margin: -4px 0 0 -4px;
+}
+
+.lds-roller div:nth-child(1) {
+    animation-delay: -0.036s;
+}
+
+.lds-roller div:nth-child(1):after {
+    top: 63px;
+    left: 63px;
+}
+
+.lds-roller div:nth-child(2) {
+    animation-delay: -0.072s;
+}
+
+.lds-roller div:nth-child(2):after {
+    top: 68px;
+    left: 56px;
+}
+
+.lds-roller div:nth-child(3) {
+    animation-delay: -0.108s;
+}
+
+.lds-roller div:nth-child(3):after {
+    top: 71px;
+    left: 48px;
+}
+
+.lds-roller div:nth-child(4) {
+    animation-delay: -0.144s;
+}
+
+.lds-roller div:nth-child(4):after {
+    top: 72px;
+    left: 40px;
+}
+
+.lds-roller div:nth-child(5) {
+    animation-delay: -0.18s;
+}
+
+.lds-roller div:nth-child(5):after {
+    top: 71px;
+    left: 32px;
+}
+
+.lds-roller div:nth-child(6) {
+    animation-delay: -0.216s;
+}
+
+.lds-roller div:nth-child(6):after {
+    top: 68px;
+    left: 24px;
+}
+
+.lds-roller div:nth-child(7) {
+    animation-delay: -0.252s;
+}
+
+.lds-roller div:nth-child(7):after {
+    top: 63px;
+    left: 17px;
+}
+
+.lds-roller div:nth-child(8) {
+    animation-delay: -0.288s;
+}
+
+.lds-roller div:nth-child(8):after {
+    top: 56px;
+    left: 12px;
+}
+
+@keyframes lds-roller {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+

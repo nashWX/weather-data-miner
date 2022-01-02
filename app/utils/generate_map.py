@@ -12,15 +12,22 @@ returnPath = ''
 agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.72 Safari/537.36 Edg/90.0.818.42"
 
 
-def generate_map(lats:float, lons:float, place_id:str):
+def generate_map(lats=None, lons=None, place_id=None, withMarker=True, points=None):
 
     #create new directory if not exists
     Path(saveLocation).mkdir(parents=True, exist_ok=True)
 
+    if not place_id and not points:
+        place_id = str(str(f"{lats}_{lons}").__hash__())
+    
+    if not place_id and points:
+        place_id = str(str(points).__hash__())
+    
     #main acctual file location
     name = saveLocation/(place_id+'_map.png')
 
     #this location will use for show this image in template
+
     returnPath = f'/media/img/{place_id}_map.png'
 
     # if not location_name and not location_id:
@@ -32,16 +39,11 @@ def generate_map(lats:float, lons:float, place_id:str):
         return  returnPath
     
     try:
-        # geolocator = Nominatim(user_agent=agent)
-        # locationz = geolocator.geocode(location_name, timeout=10)
-        # print('longitude ', locationz.longitude)
-        # print('latitude ', locationz.latitude)
-        # lons = locationz.longitude
-        # lats = locationz.latitude 
         m = Basemap(projection='merc',llcrnrlat=lats-2,urcrnrlat=lats+2,\
-                    llcrnrlon=lons-4, urcrnrlon=lons+4, resolution='l', area_thresh=15)
-
+                    llcrnrlon=lons-4, urcrnrlon=lons+4, resolution='l', area_thresh=100)
         x,y = m(lons, lats)
+        if points:
+            x,y = m(points[1], points[0])
 
         try:
             m.drawcoastlines(color='aqua', linewidth=1)
@@ -52,8 +54,14 @@ def generate_map(lats:float, lons:float, place_id:str):
         m.drawrivers(color='teal', linewidth=0.9)
         m.fillcontinents(color='black', lake_color='gray')
         m.drawlsmask(land_color='black', ocean_color='aqua', resolution='l')
-        m.plot(x, y, 'ko', markersize=10.5)
-        m.plot(x, y, 'wo', markersize=8)
+
+        if withMarker:
+            if points:
+                m.plot(x, y, 'ko', markersize=6.5)
+                m.plot(x, y, 'wo', markersize=4)
+            else:
+                m.plot(x, y, 'ko', markersize=10.5)
+                m.plot(x, y, 'wo', markersize=8)
 
         plt.axis('off')
         plt.gca().set_axis_off()

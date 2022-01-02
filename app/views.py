@@ -1,24 +1,26 @@
-from typing import cast
 from decouple import config
+from django.http.response import JsonResponse
 from django.shortcuts import render, redirect, reverse
 from django.contrib import messages
+from django.core.cache import cache
+from .utils.generate_map import generate_map
 from .models import AccessPassword, HashTag, Warning
 from dateutil.parser import isoparse
-from django.db.models import Q
 import pytz
 import datetime as dt
 from django.utils import timezone
 
 def authorize(request):
     if request.method == 'POST':
-        defaultPassword = AccessPassword.objects.first().password
         userpassword = request.POST.get('password')
+        current_user = AccessPassword.objects.filter(password=userpassword).first()
         starttime = request.POST.get('starttime')
         endtime = request.POST.get('endtime')
-        if defaultPassword == userpassword and starttime and endtime:
+        if current_user.password == userpassword and starttime and endtime:
             request.session['starttime'] = starttime
             request.session['endtime'] = endtime
             request.session['authenticate'] = True
+            request.session['access_id'] = current_user.id
             return redirect(reverse('active-report'))
         else:
             messages.add_message(request, messages.WARNING, 'invalid info provided, please provide correct data')
@@ -69,43 +71,59 @@ def authorize(request):
     return render(request, 'authorize.html', context=context)
 
 def activeReport(request):
-    start_time = isoparse(request.session['starttime'])
-    end_time = isoparse(request.session['endtime'])
-    torandoQ = Q(warning_type='TORNADO') & (Q(start_time__gte=start_time) & Q(end_time__lte=end_time))
-    tstormQ = Q(warning_type='TSTORM') & (Q(start_time__gte=start_time) & Q(end_time__lte=end_time))
-    floodQ = Q(warning_type='FLOOD') & (Q(start_time__gte=start_time) & Q(end_time__lte=end_time))
-    context = {
-       'amount_tornado_warnings': Warning.objects.filter(torandoQ).count(),
-       'amount_tstorm_warnings': Warning.objects.filter(tstormQ).count(),
-       'amount_flood_warnings': Warning.objects.filter(floodQ).count()
-    }
     if not request.session.get('authenticate'):
         messages.add_message(request, messages.WARNING, 'please provided required info before visit any other page')
         return redirect(reverse('authorize'))
+
+    access_id = request.session.get('access_id')
+    start_time = isoparse(request.session.get('starttime'))
+    end_time = isoparse(request.session.get('endtime'))
+    user = AccessPassword.objects.filter(id=access_id).first()
+    context = {
+       'amount_tornado_warnings': Warning.get_warnings('TORNADO', start_time, end_time, user).count(),
+       'amount_tstorm_warnings': Warning.get_warnings('TSTORM', start_time, end_time, user).count(),
+       'amount_flood_warnings': Warning.get_warnings('FLOOD', start_time, end_time, user).count(),
+       'last_update': cache.get('tornado_last_update')
+    }
+    context['map_path'] = generate_map(lats=user.lat, lons=user.long, withMarker=False)
     return render(request, 'active-report.html', context=context)
 
 
-def warnings(request):
-    #get and set up client timezone for future 
-    if not request.session.get('authenticate'):
-        messages.add_message(request, messages.WARNING, 'please provided required info before visit any other page')
-        return redirect(reverse('authorize'))
-    if request.method == 'POST' and request.POST.get('type'):
-        _type = request.POST.get('type')
-        start_time = isoparse(request.session['starttime'])
-        end_time = isoparse(request.session['endtime'])
-        warning_data = []
-        hashes = []
-        if _type != 'hashtag':
-            q = Q(warning_type=_type.upper()) & (Q(start_time__gte=start_time) & Q(end_time__lte=end_time))
-            warning_data = Warning.objects.filter(q)
-        else:
-            hashes = HashTag.objects.all()
+def hashtags(request):
+    hashes = HashTag.objects.all()
+    return render(request, 'hashtags.html', context={'hash_tags': hashes})
 
-        context = {
-            'type': _type, 
-            'warnings': warning_data, 
-            'hash_tags': hashes,
-        }
-        return render(request, 'warnings.html', context=context)
-    return redirect(reverse('active-report'))
+def warning_update(request):
+    access_id = request.session.get('access_id')
+    start_time = isoparse(request.session.get('starttime'))
+    end_time = isoparse(request.session.get('endtime'))
+    user = AccessPassword.objects.filter(id=access_id).first()
+
+    context = {
+       'amount_tornado_warnings': Warning.get_warnings('TORNADO', start_time, end_time, user).count(),
+       'amount_tstorm_warnings': Warning.get_warnings('TSTORM', start_time, end_time, user).count(),
+       'amount_flood_warnings': Warning.get_warnings('FLOOD', start_time, end_time, user).count(),
+    }
+
+    return JsonResponse(context)
+
+
+def warningList(request):
+    access_id = request.session.get('access_id')
+    start_time = isoparse(request.session.get('starttime'))
+    end_time = isoparse(request.session.get('endtime'))
+    user = AccessPassword.objects.filter(id=access_id).first()
+
+    warnings = Warning.get_warnings(request.GET.get('type').upper(), start_time, end_time, user)
+    lats = [warning.location.lat for warning in warnings]
+    longs = [warning.location.lng for warning in warnings]
+    warnings = [warning.formated for warning in warnings]
+    key = f"{request.GET.get('type')}_last_update"
+    last_update = cache.get(key)
+
+    context = {
+        'warnings': warnings,
+        'map_path': generate_map(lats=user.lat, lons=user.long, points=[lats, longs]),
+        'last_update': last_update,
+    }
+    return JsonResponse(context, safe=False)

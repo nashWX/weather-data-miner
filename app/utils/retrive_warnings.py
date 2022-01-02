@@ -123,29 +123,6 @@ async def retrieveWarnings(event='TORNADO'):
                     print(f'{location} -> {warning_start} -> {warning_end}')
                     await sync_to_async(obj.save)()
     
-    # if len(given_tornado_places)==0:
-    #     print(f'No {event} warnings found from last 24 hours')
-    # else:
-    #     await update_location(given_tornado_places, event)
-        
-
-    # all_warnings = await sync_to_async(Warning.objects.filter)(warning_type=event)
-    # await sync_to_async(all_warnings.delete)()
-
-    # for pl in given_tornado_places:
-    #     obj, created = await sync_to_async(Location.objects.get_or_create)(city_name=pl[0], state_name=pl[1], name=pl[0]+', '+pl[1])
-    #     if created:
-    #         await sync_to_async(obj.save)()
-            
-    #     warning, created = await sync_to_async(Warning.objects.get_or_create)(location=obj,start_time=pl[2], end_time=pl[3], warning_type=event)
-    #     await sync_to_async(warning.save)()
-
-
-    # 7. Write to file and print output.    
-    # async with aiofiles.open(filePath/'given_tornado_places.csv','w',newline="") as f:
-    #     for places in given_tornado_places:
-    #         await f.write(','.join(places))
-    #         await f.write('\n')
         
         
      
@@ -169,105 +146,6 @@ async def check_place(place, counties,us_states):
         return True
     else:
         return False
-    
-    split_counties = counties.split(';')
-    county_list = []
-    state_abr_list = []
-    async with aiofiles.open(filePath/'allowed_places.txt') as f:
-        allowed_places = await f.readlines()
-    allowed_places = [p.strip() for p in allowed_places]
-    async with aiofiles.open(filePath/'flagged_places.txt') as f:
-        flagged_places = await f.readlines()
-    flagged_places = [p.strip() for p in flagged_places]
-    for c in split_counties:
-        [count,state] = c.split(',')
-        county_list.append(count.strip()); state_abr_list.append(state.strip())
-    # First check if in allowed places (see 5.4 below). I have moved this to 
-    # check 1 as it means exceptions to the rules can just be added to 
-    # allowed_places.txt. Same with flagged places, no point doing all other 
-    # checks if it has already been flagged! Also means that if any get through
-    # that shouldn't then they can be appended to the flagged_places.txt file.
-    if place.title() in allowed_places:
-        return True
-    elif place.title() in flagged_places:
-        return False
-    
-    # Load flagged/bad words...    
-    async with aiofiles.open(filePath/'flagWords.txt') as f:
-        flagLocations = await f.readlines()
-    flagLocations = [loc.strip().lower() for loc in flagLocations]
-    async with aiofiles.open(filePath/'ignoreLocWords.txt') as f:
-        multnonLocWords = await f.readlines()
-    multnonLocWords = [loc.strip().lower() for loc in multnonLocWords]
-    async with aiofiles.open(filePath/'notLocWords.txt') as f:
-        singlenonLocWords = await f.readlines()
-    singlenonLocWords = [loc.strip().lower() for loc in singlenonLocWords]    
-
-    # 5.1 If place is a single word and in the nonloc words, then it is not a 
-    # place. e.g. place = "Other" returns False
-    if any(place in s for s in singlenonLocWords):
-        return False
-    # 5.2 if the place name contains a word of a place we are definitely not 
-    #    interested in, then we ignore it. E.g. "Pinellas County" returns False.
-    elif any(s in place for s in multnonLocWords):
-        return False
-    # Another check is to see if the place is the county name (which is given
-    # from the api as part of "areaDesc"), if it is then we are not interested
-    # and false is returned.
-    elif place in counties.lower():
-        return False
-    # Final part of 5.2 is to ignore any state names.
-    elif place.title() in us_states:
-        return False
-    
-    # 5.4. If the place has got past all of the above then we can look at the 
-    #   flag words. 
-    # Check if the place has a flag word in it (e.g. "park", "beach", "lake")
-    # First check geography.org, then check wikipedia. Really the wiki check 
-    # should suffice, but relying solely on wikipedia is not a great idea.
-    # If it fails both then return false. If it passes either return True .
-    # Append the flagged and allowed places text files for future reference.
-    elif any(s in place for s in flagLocations):
-        #  - Check geography.org, returning a place list for the given counties
-        places = await get_place_list(county_list,state_abr_list)
-        if place.title() in places:
-            # Append allowed_places.txt
-            async with aiofiles.open(filePath/'allowed_places.txt', 'a+') as f:
-                await f.seek(0)
-                numPlaces = await f.read(100)
-                if len(numPlaces) > 0:
-                    await f.write('\n')
-                await f.write(place.title())
-            return True
-        else:
-            # If not on geography.org, check wikipedia
-            uniquestates = set(state_abr_list) # Get rid of duplicates of states
-            wikiplaces = []
-            for s in uniquestates:
-                state = [k for k,v in us_states.items() if v == s] # ID --> State
-                pl = await scrape_wiki(state[0])
-                wikiplaces = wikiplaces + pl
-            if place.title() in wikiplaces:
-                # Append allowed
-                async with aiofiles.open(filePath/'allowed_places.txt', 'a+') as f:
-                    await f.seek(0)
-                    numPlaces = await f.read(100)
-                    if len(numPlaces) > 0:
-                        await f.write('\n')
-                    await f.write(place.title())
-                return True
-            else:
-                # Append flagged
-                async with aiofiles.open(filePath/'flagged_places.txt', 'a+') as f:
-                    await f.seek(0)
-                    numPlaces = await f.read(100)
-                    if len(numPlaces) > 0:
-                        await f.write('\n')
-                    await f.write(place.title())
-                return False
-    else:
-        # Place name is not in the flagged words and seems realistic.
-        return True
 
 
 

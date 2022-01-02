@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    {% include 'header.html' %}
+    <div class="hashtag-page">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <center class="my-4">
+                        <h2 class="header-title">Weather hashtags</h2>
+                    </center>
+    
+                    <div class="posts-container row rounded-xl">
+                        {% for hash in hash_tags %}
+                            <div class="col-xl-3 col-lg-4 col-md-6 col-12 px-0">
+                                <a href="{{hash.url}}" class="weather-info hashtag" target="_blank">
+                                    <div class="map">
+                                        <div class="tagname">{{ hash.name }}</div>
+                                    </div>
+                                    <div class="population">{{hash.total_post}}</div>
+                                </a>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

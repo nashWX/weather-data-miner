@@ -8,11 +8,13 @@ class LocationAdmin(admin.ModelAdmin):
     readonly_fields = ('location_map',)
     search_fields = ['name', 'city_name']
 
+class AccessPasswordAdmin(admin.ModelAdmin):
+    readonly_fields = ('nearby_locations',)
 class WarningAdmin(admin.ModelAdmin):
     list_filter = ("start_time", "end_time", 'warning_type')
     ordering = ('-start_time', '-end_time')
 
-admin.site.register(AccessPassword)
+admin.site.register(AccessPassword, AccessPasswordAdmin)
 admin.site.register(HashTag)
 admin.site.register(Location, LocationAdmin)
 admin.site.register(Warning, WarningAdmin)
