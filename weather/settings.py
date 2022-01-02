@@ -15,13 +15,13 @@ from decouple import config
 from celery.schedules import crontab
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 import os
-
+GDAL_LIBRARY_PATH = ''
 if os.name == 'nt':
     VENV_BASE = os.environ['VIRTUAL_ENV']
     os.environ['PATH'] = os.path.join(VENV_BASE, 'Lib/site-packages/osgeo') + ';' + os.environ['PATH']
     os.environ['PROJ_LIB'] = os.path.join(VENV_BASE, 'Lib/site-packages/osgeo/data/proj') + ';' + os.environ['PATH']
     
-GDAL_LIBRARY_PATH = os.path.join(VENV_BASE, 'Lib/site-packages/osgeo/gdal303.dll')
+    GDAL_LIBRARY_PATH = os.path.join(VENV_BASE, 'Lib/site-packages/osgeo/gdal303.dll')
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -90,7 +90,7 @@ DATABASES = {
         'NAME': config('DB_NAME', cast=str),
         'USER': config('DB_USER', cast=str),
         'PASSWORD': config('DB_PASSWORD', cast=str),
-        'HOST': 'localhost',
+        'HOST': config('DB_HOST', cast=str, default='localhost'),
         'PORT': '',
     }
 }
