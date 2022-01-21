@@ -1,3 +1,4 @@
+from datetime import datetime
 import json
 import pytz
 import os
@@ -6,26 +7,12 @@ from django.db import models
 from django.db.models.signals import post_save, pre_save
 from django.utils import timezone
 from django.contrib.gis.geos import Polygon, MultiPolygon, Point
+from django.core.cache import cache
 from decouple import config
 import celery
+from app.utils.checkLocationLatestPost import filterWarningByPost
 
-# Create your models here.
-# from django.db.models import F
-# from django.db.models.functions import ACos, Cos, Radians, Sin
-
-# locations = Location.objects.annotate(
-#     distance_miles = ACos(
-#         Cos(
-#             Radians(42.067203)
-#         ) * Cos(
-#             Radians(F('lat'))
-#         ) * Cos(
-#             Radians(F('lng')) - Radians(-72.505565)
-#         ) + Sin(
-#             Radians(42.067203)
-#         ) * Sin(Radians(F('lat')))
-#     ) * 3959
-# ).order_by('distance_miles')[:10]
+cache_timeout = 60 * 180
 
 
 class AccessPassword(models.Model):
@@ -36,6 +23,7 @@ class AccessPassword(models.Model):
         POINT = 'Point', 'Point'
 
     password = models.CharField(verbose_name="Access Password", max_length=12)
+    name = models.CharField(max_length=255, verbose_name='User Name', blank=True, null=True)
     coordinates = models.JSONField(verbose_name='Location Coordinates', null=True)
     lat = models.FloatField(verbose_name='Latitude center of coordinates', max_length=24, null=True)
     long = models.FloatField(verbose_name='Longitude center of coordinates', max_length=24, null=True)
@@ -54,8 +42,14 @@ class AccessPassword(models.Model):
         return []
     
     def __str__(self) -> str:
-        return f"{self.lat}<>{self.long} ({self.coordinate_type})"
+        return str(self.name)
 
+
+class Util(models.Model):
+    verify_media_url = models.URLField(verbose_name='Verify media url', null=True, blank=True)
+    insta_sessionid = models.TextField(max_length=512, verbose_name='Instagram Session Id', help_text='Insert instagram sessionid separated by comma', null=True, blank=True)
+    about_text = models.TextField(verbose_name='About Text', null=True, blank=True)
+    turn_on_filtering = models.BooleanField(verbose_name='Turn on Post filtering', default=False)
 
 class Location(models.Model):
     states = {
@@ -268,8 +262,17 @@ class Warning(models.Model):
     
     @staticmethod
     def get_warnings(_type='TORNADO', start_time=None, end_time=None, user=None):
-        q = Q(warning_type=_type) & (Q(start_time__gte=start_time) & Q(end_time__lte=end_time)) & Q(location__id__in=user.locations)
-        return Warning.objects.filter(q).order_by('-start_time')
+        q = Q(warning_type=_type) & (Q(start_time__gte=start_time) & Q(end_time__lte=end_time)) & Q(location__id__in=user.locations) & Q(location__location_id__isnull=False)
+        warnings = Warning.objects.select_related('location').filter(q).order_by('-start_time')
+        key = str(warnings).__hash__()
+
+        if cache.get(key):
+            return cache.get(key)
+        # if warnings:
+        #     warnings = filterWarningByPost(warnings, datetime.timestamp(start_time))
+        #     cache.set(key, warnings, cache_timeout)
+        
+        return warnings
     
     @property
     def formated(self):
@@ -301,6 +304,7 @@ class HashTag(models.Model):
         null=True,
         blank=True,
     )
+    users = models.ManyToManyField(AccessPassword, verbose_name='Users Belong This Tag', blank=True, null=True)
 
     @property
     def total_post(self):

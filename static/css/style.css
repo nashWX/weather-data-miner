@@ -24,27 +24,16 @@ img {
 
 
 .form-container {
-    /* width: 570px;
-    min-height: 350px;
-    background: linear-gradient(#14D4CF, #2FABE5);
-    background: linear-gradient(#14D4CF, #2FABE5);
-    padding: 1.5rem;
-    border-radius: 1rem;
-    max-width: 100%; */
-
     width: 570px;
     min-height: 350px;
     max-width: 100%;
     background: linear-gradient(rgb(20, 212, 207), rgb(47, 171, 229));
-    /* background: rgba(0,0,0,0.8); */
     background: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)) padding-box, linear-gradient(to bottom, rgba(20, 212, 207, 0.8), rgba(47, 171, 229, 0.8)) border-box;
     border-radius: 1rem;
     border: 1.5rem solid transparent;
 }
 
 .loginform {
-    /* background: #000; */
-    /* border-radius: 1.5rem; */
     width: 100%;
     height: 100%;
     padding: 1.5rem;
@@ -89,7 +78,6 @@ img {
     justify-content: center;
     background: #000;
     padding: 3px 10px;
-    margin-top: 2rem;
     text-transform: uppercase;
 }
 
@@ -280,7 +268,9 @@ active report page styles
 }
 
 .report-page .weather-info:hover::after,
-.hashtag-page .weather-info:hover::after {
+.hashtag-page .weather-info:hover::after,
+.report-page .weather-info.visited::after,
+.hashtag-page .weather-info.visited::after {
     display: block;
 }
 
@@ -431,6 +421,7 @@ active report page styles end
     height: 500px;
     position: relative;
     display: block;
+    overflow: hidden;
 }
 
 .weather-info.tornado {
@@ -489,10 +480,11 @@ active report page styles end
 }
 
 .map .tagname {
-    font-size: 1.7em;
+    font-size: 1.2em;
     font-weight: 600;
     color: #26DDDA;
     text-transform: uppercase;
+    max-width: 190px;
 }
 
 .weather-info.tstorm .map {
@@ -663,22 +655,22 @@ a.weather-info.hashtag .map {
         left: 19.2%;
     }
 
-    .weather-info.tornado .map {
-        left: 15%;
-    }
-
+    .weather-info.tornado .map,
     .weather-info.tstorm .map {
-        left: 14.4%;
+        left: 13%;
+    }
+    .weather-info.flood .map {
+        left: 18%;
     }
 
     .weather-info.tornado .time-stamp {
-        width: 78%;
-        left: 12%;
+        width: 81%;
+        left: 9%;
     }
 
-    .weather-info.tstorm .time-stamp {
-        width: 78%;
-        left: 11.2%;
+    .posts-container .weather-info.tstorm .time-stamp {
+        width: 81%;
+        left: 9%;
     }
 
     .weather-info.tornado .locality {
@@ -692,6 +684,26 @@ a.weather-info.hashtag .map {
     .report-page .subject-btn .btn-content {
         font-size: 1.5rem;
     }
+
+    .report-page .weather-info.tornado:hover::after,
+    .report-page .weather-info.tstorm:hover::after {
+        left: -3%;
+        width: 106%;
+    }
+    .report-page .weather-info.flood::after {
+        left: 2%;
+        width: 103%;
+    }
+
+    .weather-info.flood .time-stamp {
+        left: 15%;
+        width: 79%;
+    }
+    .weather-info.hashtag::after {
+        left: 0%;
+        width: 100%;
+    }
+
 }
 
 @media screen and (min-width: 992px) and (max-width: 1198px) {
@@ -700,11 +712,27 @@ a.weather-info.hashtag .map {
     }
 
     .weather-info.tstorm .map {
-        left: 18%;
+        left: 16%;
+    }
+    .weather-info.tornado .map {
+        left: 17%;
+    }
+    .weather-info.flood .map {
+        left: 21%;
     }
 
-    .weather-info.tstorm .time-stamp {
-        left: 16%;
+    .posts-container .weather-info.tstorm .time-stamp {
+        left: 13%;
+        width: 75%;
+    }
+    .weather-info.flood .time-stamp {
+        left: 17%;
+        width: 72%;
+    }
+
+    .weather-info.tornado .time-stamp {
+        left: 13%;
+        width: 72%;
     }
 
     .report-page .subject-btn .btn-content {
@@ -756,18 +784,18 @@ a.weather-info.hashtag .map {
 
     .weather-info.tstorm .map {
         top: 41.5%;
-        left: 21.4%;
+        left: 20%;
     }
 
     .weather-info.flood .map {
         top: 41%;
-        left: 25.5%;
-        width: 200px;
+        left: 23%;
+        width: 202px;
         height: 136px;
     }
 
     .weather-info.tornado .map {
-        left: 21.2%;
+        left: 20%;
     }
 
     .weather-info.flood .time-stamp {
@@ -777,6 +805,12 @@ a.weather-info.hashtag .map {
 
     .weather-info.tornado .time-stamp {
         left: 18.5%;
+    }
+
+    .posts-container .weather-info.tstorm .time-stamp {
+        left: 18%;
+        width: 63.8%;
+        
     }
 
     .weather-info.tstorm .locality {
@@ -830,6 +864,13 @@ a.weather-info.hashtag .map {
         margin-left: auto;
     }
 
+    .subject-btn .btn-content {
+        font-size: 1rem;
+    }
+    .weather-info.tornado .time-stamp {
+        left: 16.5%;
+        width: 65.8%;
+    }
     .subject-btn-update.got-update::before {
         left: -36%;
         top: -13px;
@@ -847,7 +888,10 @@ a.weather-info.hashtag .map {
         height: 520px;
     }
 
-    .time-stamp {
+    .time-stamp,
+    .weather-info.tstorm .time-stamp,
+    .weather-info.tornado .time-stamp
+     {
         left: 28%;
         width: 44%;
     }
@@ -892,6 +936,21 @@ a.weather-info.hashtag .map {
     }
     .subject-btn-update.got-update .icon {
         border-color: red;
+    }
+    .report-page .weather-info.flood::after {
+        left: 22%;
+        width: 60%;
+    }
+    .report-page .weather-info.tstorm::after,
+    .report-page .weather-info.tornado::after {
+        left: 19%;
+        width: 61%;
+        height: 83%;
+    }
+
+    .weather-info.hashtag::after {
+        left: 20%;
+        width: 59%;
     }
 
 }
@@ -950,7 +1009,7 @@ a.weather-info.hashtag .map {
     }
 
     .nav ul li a {
-        font-size: 1rem;
+        font-size: 14px;
         padding: 1px 8px;
         border-width: 3px;
     }
@@ -977,7 +1036,7 @@ a.weather-info.hashtag .map {
     }
 
     .subject-btn .btn-content {
-        font-size: 1.4rem;
+        font-size: 1.2rem;
     }
 
     .posts-container {
@@ -1005,23 +1064,24 @@ a.weather-info.hashtag .map {
     }
 
     .weather-info.hashtag::after {
-        left: 21%;
-        top: 15px;
-        width: 57.5%;
-        height: 79%;
+        left: 15%;
+        width: 70%;
     }
 }
 
 @media screen and (max-width: 450px) {
+    .form-container {
+        border: 12px solid transparent;
+    }
     .weather-info.flood .map {
         top: 41.4%;
-        left: 25%;
+        left: 24%;
         width: 234px;
         height: 153px;
     }
 
     .weather-info.tstorm .map {
-        left: 22%;
+        left: 20%;
         top: 41%;
         width: 235px;
         height: 161px;
@@ -1030,22 +1090,22 @@ a.weather-info.hashtag .map {
     .weather-info.tornado .map {
         width: 240px;
         height: 160px;
-        left: 22%;
+        left: 21%;
     }
 
     .weather-info.flood .time-stamp {
-        left: 25%;
-        width: 57%;
+        left: 22%;
+        width: 62%;
     }
 
     .weather-info.tornado .time-stamp {
-        left: 23%;
-        width: 55%;
+        left: 18%;
+        width: 63%;
     }
 
-    .weather-info.tstorm .time-stamp {
-        left: 23%;
-        width: 55%;
+    .posts-container .weather-info.tstorm .time-stamp {
+        left: 18%;
+        width: 63%;
     }
 
     .weather-info.flood .locality {
@@ -1068,20 +1128,28 @@ a.weather-info.hashtag .map {
     }
 
     .report-page .weather-info.tstorm::after {
-        top: 6px;
-        left: 11%;
-        width: 77%;
+        top: 8px;
+        left: 8.5%;
+        width: 82%;
+        height: 83%;
     }
 
     .report-page .weather-info.flood::after {
-        left: 15%;
-        width: 75%;
+        left: 12%;
+        width: 82%;
+    }
+
+    .report-page .weather-info.tornado::after {
+        left: 9%;
+        top: 2px;
+        width: 83%;
+        height: 84%;
     }
 
     .weather-info.hashtag::after {
-        left: 13%;
+        left: 10%;
         top: 13px;
-        width: 73%;
+        width: 79%;
         height: 80%;
     }
 }
@@ -1089,7 +1157,43 @@ a.weather-info.hashtag .map {
 .weather-info.visited {
     opacity: 0.5;
 }
+@media screen and (max-width: 400px) {
+    .report-page .weather-info.tornado::after {
+        left: 7%;
+        width: 87%;
+    }
+    .weather-info.tornado .time-stamp {
+        left: 16%;
+        width: 68%;
+    }
 
+    .report-page .weather-info.tstorm::after {
+        top: 8px;
+        left: 6%;
+        width: 87%;
+        height: 83%;
+    }
+    .report-page .weather-info.flood::after {
+        left: 10%;
+        width: 86%;
+    }
+
+    .weather-info.hashtag::after {
+        left: 8%;
+        width: 83%;
+    }
+
+    .weather-info.tornado .map {
+        left: 19%;
+    }
+    .weather-info.tstorm .map {
+        left: 18%;
+    }
+    .weather-info.flood .map {
+        left: 23%;
+    }
+
+}
 @media screen and (max-width: 375px) {
     .subject-btn .btn-content {
         font-size: 1.1rem;
@@ -1100,14 +1204,14 @@ a.weather-info.hashtag .map {
         width: 65%;
     }
 
-    .weather-info.tstorm .time-stamp {
-        left: 20%;
-        width: 60%;
+    .posts-container .weather-info.tstorm .time-stamp {
+        left: 14%;
+        width: 71%;
     }
 
     .weather-info.tornado .time-stamp {
-        left: 19%;
-        width: 64%;
+        left: 16%;
+        width: 66%;
     }
 
     .weather-info.flood .map {
@@ -1118,7 +1222,7 @@ a.weather-info.hashtag .map {
     }
 
     .weather-info.tstorm .map {
-        left: 18%;
+        left: 17%;
     }
 
     .weather-info.tornado .map {
@@ -1157,25 +1261,61 @@ a.weather-info.hashtag .map {
         left: 24%;
     }
 
-    .report-page .weather-info::after,
-    .report-page .weather-info.tstorm::after {
+    .report-page .weather-info::after {
         left: 6.5%;
         width: 87%;
     }
 
     .report-page .weather-info.flood::after {
-        left: 10%;
-        width: 86%;
+        left: 8%;
+        width: 90%;
+    }
+    .report-page .weather-info.tornado::after {
+        left: 4%;
+        top: 2px;
+        width: 92%;
+        height: 84%;
+    }
+
+   .report-page .weather-info.tstorm::after {
+        left: 4%;
+        width: 91%;
     }
 
     .weather-info.hashtag::after {
-        left: 8%;
-        top: 13px;
-        width: 83%;
-        height: 80%;
+        left: 6%;
+        width: 87%;
     }
 }
+@media screen and (min-width: 321px) and (max-width: 374px) {
+    .report-page .weather-info.tornado::after {
+        left: 3%;
+        width: 95%;
+    }
+    .weather-info.tornado .time-stamp {
+        left: 14%;
+        width: 70%;
+    }
+    .report-page .weather-info.tstorm::after {
+        left: 2%;
+        width: 94%;
+    }
+    .report-page .weather-info.flood::after {
+        left: 7%;
+        width: 93%;
+    }
+    .weather-info.hashtag::after {
+        left: 4%;
+        width: 92%;
+    }
 
+    .weather-info.tstorm .map {
+        left: 16%;
+    }
+    .weather-info.flood .map {
+        left: 20%;
+    }
+}
 @media screen and (max-width: 320px) {
     .weather-info.flood .time-stamp {
         left: 16.5%;
@@ -1365,3 +1505,29 @@ a.weather-info.hashtag .map {
     }
 }
 
+p.last-time {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+p.last-time .h, 
+p.last-time .s {
+    width: 28px;
+    letter-spacing: 1px;
+}
+
+p.last-time .m {
+    width: 38px;
+    letter-spacing: 1px;
+    margin: 0 1.2px;
+}
+
+.about-text {
+    max-width: 1024px;
+    text-align: center;
+    line-height: 1.5;
+    font-size: 1.5em;
+    margin: 0 auto;
+    color: #357e86;
+}

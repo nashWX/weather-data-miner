@@ -4,7 +4,7 @@ from django.shortcuts import render, redirect, reverse
 from django.contrib import messages
 from django.core.cache import cache
 from .utils.generate_map import generate_map
-from .models import AccessPassword, HashTag, Warning
+from .models import AccessPassword, HashTag, Util, Warning
 from dateutil.parser import isoparse
 import pytz
 import datetime as dt
@@ -80,9 +80,9 @@ def activeReport(request):
     end_time = isoparse(request.session.get('endtime'))
     user = AccessPassword.objects.filter(id=access_id).first()
     context = {
-       'amount_tornado_warnings': Warning.get_warnings('TORNADO', start_time, end_time, user).count(),
-       'amount_tstorm_warnings': Warning.get_warnings('TSTORM', start_time, end_time, user).count(),
-       'amount_flood_warnings': Warning.get_warnings('FLOOD', start_time, end_time, user).count(),
+       'amount_tornado_warnings': len(Warning.get_warnings('TORNADO', start_time, end_time, user)),
+       'amount_tstorm_warnings': len(Warning.get_warnings('TSTORM', start_time, end_time, user)),
+       'amount_flood_warnings': len(Warning.get_warnings('FLOOD', start_time, end_time, user)),
        'last_update': cache.get('tornado_last_update')
     }
     context['map_path'] = generate_map(lats=user.lat, lons=user.long, withMarker=False)
@@ -90,7 +90,9 @@ def activeReport(request):
 
 
 def hashtags(request):
-    hashes = HashTag.objects.all()
+    access_id = request.session.get('access_id')
+    user = AccessPassword.objects.filter(id=access_id).first()
+    hashes = user.hashtag_set.all()
     return render(request, 'hashtags.html', context={'hash_tags': hashes})
 
 def warning_update(request):
@@ -98,13 +100,12 @@ def warning_update(request):
     start_time = isoparse(request.session.get('starttime'))
     end_time = isoparse(request.session.get('endtime'))
     user = AccessPassword.objects.filter(id=access_id).first()
-
     context = {
-       'amount_tornado_warnings': Warning.get_warnings('TORNADO', start_time, end_time, user).count(),
-       'amount_tstorm_warnings': Warning.get_warnings('TSTORM', start_time, end_time, user).count(),
-       'amount_flood_warnings': Warning.get_warnings('FLOOD', start_time, end_time, user).count(),
+        'amount_tornado_warnings': len(Warning.get_warnings('TORNADO', start_time, end_time, user)),
+        'amount_tstorm_warnings': len(Warning.get_warnings('TSTORM', start_time, end_time, user)),
+        'amount_flood_warnings': len(Warning.get_warnings('FLOOD', start_time, end_time, user)),
+        'last_update': cache.get("tornado_last_update")
     }
-
     return JsonResponse(context)
 
 
@@ -127,3 +128,6 @@ def warningList(request):
         'last_update': last_update,
     }
     return JsonResponse(context, safe=False)
+
+def about(request):
+    return render(request, 'about.html')

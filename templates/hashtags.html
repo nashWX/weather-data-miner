@@ -28,3 +28,19 @@
         </div>
     </div>
 {% endblock %}
+
+
+{% block script %}
+<script>
+    const handleClick = (e) => {
+        if(!e.currentTarget.classList.contains('visited')) {
+            e.currentTarget.classList.add('visited');
+        }
+    }
+    const weatherInfos = document.querySelectorAll('.weather-info');
+    weatherInfos.forEach(item => {
+        item.removeEventListener('click', handleClick);
+        item.addEventListener('click', handleClick);
+    });
+</script>
+{% endblock %}

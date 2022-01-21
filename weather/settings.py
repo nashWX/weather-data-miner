@@ -37,9 +37,10 @@ ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=lambda hosts: [h.strip() for h in h
 # Application definition
 
 INSTALLED_APPS = [
+    'grappelli',
     'django.contrib.admin',
-    'django.contrib.auth',
     'django.contrib.contenttypes',
+    'django.contrib.auth',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
@@ -72,6 +73,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'app.context_processor.util',
             ],
         },
     },
@@ -192,6 +194,6 @@ CACHES = {
     }
 }
 
-
+GRAPPELLI_ADMIN_TITLE = 'STORM SCANNER'
 if not DEBUG:
     from .settings_prod import *

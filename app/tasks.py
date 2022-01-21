@@ -6,6 +6,7 @@ from pyppeteer import launch
 from django.db.models import Q
 from django.core.cache import cache
 from asgiref.sync import sync_to_async
+import pytz
 from .models import Location
 from .utils.update_location import update_location
 from .utils.get_hashtag import get_hashtag
@@ -19,7 +20,7 @@ from .utils.helpers import (
 def tornadow_warning():
     if os.name == 'nt':
         asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
-    cache.set('tornado_last_update', datetime.now().strftime('%H:%M:%S'), None)
+    cache.set('tornado_last_update', datetime.now(tz=pytz.utc).strftime('%Y-%m-%dT%H:%M:%S%z'), None)
     asyncio.run(retrieveWarnings(event='TORNADO'))
 
 
@@ -27,14 +28,14 @@ def tornadow_warning():
 def thunderstorm_warning():
     if os.name == 'nt':
         asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
-    cache.set('tstorm_last_update', datetime.now().strftime('%H:%M:%S'), None)
+    cache.set('tstorm_last_update', datetime.now(tz=pytz.utc).strftime('%Y-%m-%dT%H:%M:%S%z'), None)
     asyncio.run(retrieveWarnings(event='TSTORM'))
 
 @shared_task
 def flood_warning():
     if os.name == 'nt':
         asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
-    cache.set('flood_last_update', datetime.now().strftime('%H:%M:%S'), None)
+    cache.set('flood_last_update', datetime.now(tz=pytz.utc).strftime('%Y-%m-%dT%H:%M:%S%z'), None)
     asyncio.run(retrieveWarnings(event='FLOOD'))
 
 @shared_task

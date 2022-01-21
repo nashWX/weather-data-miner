@@ -19,6 +19,9 @@ def generate_map(lats=None, lons=None, place_id=None, withMarker=True, points=No
 
     if not place_id and not points:
         place_id = str(str(f"{lats}_{lons}").__hash__())
+
+    if not place_id and points and not len(points[0]) and not len(points[1]):
+        place_id = str(str(f"{lats}_{lons}").__hash__())
     
     if not place_id and points:
         place_id = str(str(points).__hash__())

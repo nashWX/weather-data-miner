@@ -68,7 +68,11 @@
                 <div class="warning-map">
                     <div class="last-update">
                         <h5>last update</h5>
-                        <p class="last-time">{{last_update}}</p>
+                        <p class="last-time">
+                            <span class="h">00</span>
+                            <span class="m">:00:</span>
+                            <span class="s">00</span>
+                        </p>
                     </div>
                     <!-- <img src="/media/img/110148382341970_map.png" alt="center map"> -->
                     <img src="{{map_path}}" alt="center map" id="big-map">
@@ -118,10 +122,39 @@
         }
         return false;
     }
-
     let flood = +"{{amount_flood_warnings}}";
     let tstorm = +"{{amount_tstorm_warnings}}";
     let tornado = +"{{amount_tornado_warnings}}";
+    var last_update = "{{last_update}}";
+    const timer_h = document.querySelector('.h');
+    const timer_m = document.querySelector('.m');
+    const timer_s = document.querySelector('.s');
+
+    function hideLabel(hide=false) {
+        if(hide && !document.querySelector('.posts-label').classList.contains('d-none')) {
+            document.querySelector('.posts-label').classList.add('d-none');
+        } else if(!hide) {
+            document.querySelector('.posts-label').classList.remove('d-none');
+        }
+    }
+
+    function lastUpdated() {
+      const d1 = new Date(last_update);
+      const d2 = new Date();
+      const h = Math.max(0, d2.getHours() - d1.getHours());
+      const m = Math.max(0, d2.getMinutes() - d1.getMinutes());
+      const s = Math.max(0, d2.getSeconds() - d1.getSeconds());
+      timer_h.innerText = `${h < 10 ? '0'+h : h}`;
+      timer_m.innerText = `:${m < 10 ? '0'+m : m}:`;
+      timer_s.innerText = `${s < 10 ? '0'+s : s}`;
+    }
+
+    var interval_id = setInterval(lastUpdated, 1000);
+
+
+
+    hideLabel(true);
+    
 
     const flood_count = document.querySelector('.flood-count');
     const tstorm_count = document.querySelector('.tstorm-count');
@@ -134,26 +167,37 @@
 
     async function subscribeWarningUpdate() {
         const response = await fetch('/warning-update');
+        const interval = (1000 * 60 * 2);
         if (selected_warning_type) {
             const data = (await fetch(`/warning-list?type=${selected_warning_type}`).then(resp => resp.json())) || [];
             const partial_data = data.warnings.filter(item => !old_warning_data.contains(item))
             if(data.last_update) {
-                last_time.innerText = data.last_update;
+                last_update = data.last_update;
+                clearInterval(interval_id);
+                interval_id = setInterval(lastUpdated, 1000);
             }
             if (partial_data.length) {
                 renderWarnings(partial_data, false);
                 old_warning_data = [...old_warning_data, ...partial_data];
                 big_map.setAttribute('src', data.map_path);
+                hideLabel()
+            } else if(!partial_data.length && !old_warning_data.length) {
+                hideLabel(true);
             }
         }
         if (response.status === 502) {
             await subscribeWarningUpdate();
         } else if (response.status !== 200) {
             console.error(response.statusText);
-            await new Promise((resolve) => setTimeout(resolve, 2000));
+            await new Promise((resolve) => setTimeout(resolve, interval));
             await subscribeWarningUpdate();
         } else {
             const data = await response.json();
+            if(!selected_warning_type && data.last_update) {
+                last_update = data.last_update;
+                clearInterval(interval_id);
+                interval_id = setInterval(lastUpdated, 1000);
+            } 
 
             if (flood !== data.amount_flood_warnings) {
                 flood = data.amount_flood_warnings;
@@ -173,7 +217,7 @@
                 tornado_count.parentElement.parentElement.classList.add('got-update');
             }
 
-            await new Promise((resolve) => setTimeout(resolve, (1000 * 20)));
+            await new Promise((resolve) => setTimeout(resolve, interval));
             await subscribeWarningUpdate();
         }
     }
@@ -195,7 +239,16 @@
             big_map.setAttribute('src', data.map_path);
             selected_warning_type = warningType;
             renderWarnings(old_warning_data);
-            last_time.innerText = data.last_update;
+            clearInterval(interval_id);
+            interval_id = setInterval(lastUpdated, 1000);
+
+            if(old_warning_data.length) {
+                console.log('warning label show...')
+                hideLabel()
+            } else {
+                console.log('warning label show...2')
+                hideLabel(true);
+            }
         });
     });
 
@@ -215,7 +268,7 @@
                                 <div class="endtime">${warning.end}</div>
                             </div>
                             <div class="map">
-                                <img src="${warning.location.location_map}" alt="map">
+                                <img src="${warning.location.location_map ?? '/media/img/2683391338749083463_map.png'}" alt="map">
                             </div>
                             <div class="population">${warning.location.popu}</div>
                             <div class="locality">

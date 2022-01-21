@@ -5,7 +5,7 @@ urlpatterns = [
     path('', views.authorize, name="authorize"),
     path('hashtags', views.hashtags, name="hashtags"),
     path('active-reports', views.activeReport, name="active-report"),
-    # path('warnings', views.warnings, name="warnings"),
+    path('about', views.about, name="about"),
     path('warning-update', views.warning_update, name="warning-update"),
     path('warning-list', views.warningList, name="warning-list"),
 ]
