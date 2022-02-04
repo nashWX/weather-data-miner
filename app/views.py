@@ -33,33 +33,33 @@ def authorize(request):
     past_24hour = dt.datetime.now(tz=pytz.utc) - dt.timedelta(hours=24)
     suggestions = [
         {
-            'local': timezone.localtime(past_30, pytz.timezone(zone)).strftime('%Y-%m-%d %I:%M'),
+            'local': timezone.localtime(past_30, pytz.timezone(zone)).strftime('%Y-%m-%d %I:%M %p'),
             'utc': past_30.isoformat(),
             'title': 'Past 30 Minutes',
          },
         {
-            'local': timezone.localtime(past_hour, pytz.timezone(zone)).strftime('%Y-%m-%d %I:%M'),
+            'local': timezone.localtime(past_hour, pytz.timezone(zone)).strftime('%Y-%m-%d %I:%M %p'),
             'utc': past_hour.isoformat(),
             'title': 'Past Hour',
         },
         {
-            'local': timezone.localtime(past_3hour, pytz.timezone(zone)).strftime('%Y-%m-%d %I:%M'),
+            'local': timezone.localtime(past_3hour, pytz.timezone(zone)).strftime('%Y-%m-%d %I:%M %p'),
             'utc': past_3hour.isoformat(),
             'title': 'Past 3 Hours',
         },
         {
-            'local': timezone.localtime(past_12hour, pytz.timezone(zone)).strftime('%Y-%m-%d %I:%M'),
+            'local': timezone.localtime(past_12hour, pytz.timezone(zone)).strftime('%Y-%m-%d %I:%M %p'),
             'utc': past_12hour.isoformat(),
             'title': 'Past 12 Hours',
         },
         {
-            'local': timezone.localtime(past_24hour, pytz.timezone(zone)).strftime('%Y-%m-%d %I:%M'),
+            'local': timezone.localtime(past_24hour, pytz.timezone(zone)).strftime('%Y-%m-%d %I:%M %p'),
             'utc': past_24hour.isoformat(),
             'title': 'Past 24 Hours',
         },
     ]
 
-    end_local =  dt.datetime.now(tz=pytz.timezone(zone)).strftime('%Y-%m-%d %I:%M')
+    end_local =  dt.datetime.now(tz=pytz.timezone(zone)).strftime('%Y-%m-%d %I:%M %p')
     end_utc =   dt.datetime.now(tz=pytz.utc).isoformat()
 
     context = {

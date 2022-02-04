@@ -265,12 +265,16 @@ class Warning(models.Model):
         q = Q(warning_type=_type) & (Q(start_time__gte=start_time) & Q(end_time__lte=end_time)) & Q(location__id__in=user.locations) & Q(location__location_id__isnull=False)
         warnings = Warning.objects.select_related('location').filter(q).order_by('-start_time')
         key = str(warnings).__hash__()
-
         if cache.get(key):
             return cache.get(key)
-        # if warnings:
-        #     warnings = filterWarningByPost(warnings, datetime.timestamp(start_time))
-        #     cache.set(key, warnings, cache_timeout)
+
+        util = Util.objects.first()
+
+        if warnings and util.turn_on_filtering and util.insta_sessionid:
+            warnings = filterWarningByPost(warnings, datetime.timestamp(start_time))
+            cache.set(key, warnings, cache_timeout)
+        else:
+            cache.set(key, warnings, cache_timeout)
         
         return warnings
     

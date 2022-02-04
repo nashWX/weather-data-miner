@@ -1,10 +1,10 @@
 import requests
 import random
 # from django.conf import settings
-from tqdm import tqdm
 import concurrent.futures
 import numpy as np
 import random
+
 user_agents = [
     "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)",
     "Googlebot/2.1 (+http://www.googlebot.com/bot.html)",
@@ -12,10 +12,10 @@ user_agents = [
 ]
 
 
-def checkPostExistsOnThisLocation(warning=None, timestamp=0):
+def checkPostExistsOnThisLocation(warning=None, timestamp=0, sessionid=None):
     url = f"https://www.instagram.com/explore/locations/{warning.location.location_id}/?__a=1"
     headers = {"user-agent": random.choice(user_agents)}
-    cookies = {"sessionid": "4526877383%3ACd5ZxBHdghkgPp%3A17"}
+    cookies = {"sessionid": sessionid}
     proxies={
         # "http": "http://ylnmpdzr-rotate:fcyzrvj2mpa3@p.webshare.io:80/",
         # "https": "http://ylnmpdzr-rotate:fcyzrvj2mpa3@p.webshare.io:80/"
@@ -30,7 +30,7 @@ def checkPostExistsOnThisLocation(warning=None, timestamp=0):
         data = resp.json()
         recentPost = data['native_location_data']['recent']['sections'][0]['layout_content']['medias'][0]['media']
         post_time = recentPost['taken_at']
-        print(post_time)
+
         if post_time >= timestamp:
             return True
         return None
@@ -41,11 +41,11 @@ def checkPostExistsOnThisLocation(warning=None, timestamp=0):
     return False
 
 
-def checkPool(warnings=[], start_time=0):
+def checkPool(warnings=[], start_time=0, sessionid=None):
     success_results = []
     failed_results = []
     for warning in warnings:
-        success = checkPostExistsOnThisLocation(warning, start_time)
+        success = checkPostExistsOnThisLocation(warning, start_time, sessionid=None)
         if success == True:
             success_results.append(warning)
         elif success == False:
@@ -54,13 +54,19 @@ def checkPool(warnings=[], start_time=0):
     return success_results, failed_results
 
 
+def getRandomSessionId():
+    from app.models import Util
+    util = Util.objects.first()
+    ids = util.insta_sessionid.split(",")
+    index = random.randint(0, len(ids)-1) or 0
+    return ids[index]
 
 def runThreading(chunks=[], numberOfThread=25, start_time=0, retry=1, results=[]):
     failed = []
     with concurrent.futures.ThreadPoolExecutor(max_workers=numberOfThread) as executor:
         execList = []
         for chunk in chunks:
-            execList.append(executor.submit(checkPool, chunk, start_time))
+            execList.append(executor.submit(checkPool, chunk, start_time, getRandomSessionId()))
         
         for item in concurrent.futures.as_completed(execList):
             success_ids, failed_ids = item.result()
@@ -90,14 +96,13 @@ def filterWarningByPost(queryset=[], start_time=0):
     #         id = id.strip().strip('\n')
     #         if id:
     #             filteredId.append(id)
-
+    
     filteredWarning = [warning for warning in queryset if warning.location.location_id]
     number_split = 20
     arr = np.array(filteredWarning)
     chunks = np.array_split(arr, number_split)
     results = runThreading(chunks, number_split, start_time)
-    print(results)
-    
+
 
     return [item for result in results for item in result]
         
