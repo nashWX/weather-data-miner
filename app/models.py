@@ -265,7 +265,7 @@ class Warning(models.Model):
         q = Q(warning_type=_type) & (Q(start_time__gte=start_time) & Q(end_time__lte=end_time)) & Q(location__id__in=user.locations) & Q(location__location_id__isnull=False)
         warnings = Warning.objects.select_related('location').filter(q).order_by('-start_time')
         key = str(warnings).__hash__()
-        if cache.get(key):
+        if cache.get(key) and len(cache.get(key)) == len(warnings):
             return cache.get(key)
 
         util = Util.objects.first()
