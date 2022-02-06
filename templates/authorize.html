@@ -8,9 +8,9 @@
     <source src="/static/img/bg-video.webm" type="video/webm">
 </video>
 
-<div class="home-logo">
+<!-- <div class="home-logo">
     <img src="/static/img/logo-2.png" alt="logo-home">
-</div>
+</div> -->
 <div class="container">
     <div class="row">
         <div class="col-md-6 mx-auto mt-sm-4 mt-2">
@@ -23,6 +23,7 @@
         <div class="col-12 min-vh-100 d-flex align-items-center justify-content-center">
             <div class="form-container">
                 <form class="loginform text-center" method="POST" action="{% url 'authorize' %}">
+                    <img src="/static/img/home-logo.png" alt="home-log" style="max-height: 94px;">
                     {% csrf_token %}
                     <h2>Password</h2>
                     <div class="mb-sm-4 mb-2">
@@ -71,6 +72,7 @@
             altFormat: 'Y-m-dTh:i K'
         });
 
+
         const suggestions = document.querySelectorAll('.suggestion');
         if(suggestions) {
             suggestions.forEach(suggestion => {
@@ -89,9 +91,8 @@
                 starttime.value = iso.split('_')[0];
                 endtime.value = iso.split('_')[1];
                 if(starttime.nextElementSibling.classList.contains('flatpickr-mobile')) {
-                    console.log(local.split('_')[0])
-                    starttime.nextElementSibling.value = local.split('_')[0].replace(' ', 'T');
-                    endtime.nextElementSibling.value = local.split('_')[1].replace(' ', 'T');
+                    starttime.nextElementSibling.value = local.split('_')[0].replace(' ', 'T').replace('AM', "").replace("PM", "").trim();
+                    endtime.nextElementSibling.value = local.split('_')[1].replace(' ', 'T').replace('AM', "").replace("PM", "").trim();
                 } else {
                     starttime.nextElementSibling.value = local.split('_')[0];
                     endtime.nextElementSibling.value = local.split('_')[1];
