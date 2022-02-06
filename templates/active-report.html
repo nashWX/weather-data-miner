@@ -112,7 +112,11 @@
 
 {% block script %}
 <script>
-
+    function playSound() {
+        const audio = new Audio('/static/audio/tone.mp3');
+        audio.play();
+        audio.remove();
+    }
     Array.prototype.contains = function (obj1) {
         const elements = this;
         for (const obj2 of elements) {
@@ -181,6 +185,7 @@
                 old_warning_data = [...old_warning_data, ...partial_data];
                 big_map.setAttribute('src', data.map_path);
                 hideLabel()
+                playSound()
             } else if(!partial_data.length && !old_warning_data.length) {
                 hideLabel(true);
             }
