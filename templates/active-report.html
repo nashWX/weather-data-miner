@@ -185,7 +185,6 @@
                 old_warning_data = [...old_warning_data, ...partial_data];
                 big_map.setAttribute('src', data.map_path);
                 hideLabel()
-                playSound()
             } else if(!partial_data.length && !old_warning_data.length) {
                 hideLabel(true);
             }
@@ -208,18 +207,21 @@
                 flood = data.amount_flood_warnings;
                 flood_count.innerText = flood;
                 flood_count.parentElement.parentElement.classList.add('got-update');
+                playSound();
             }
 
             if (tstorm !== data.amount_tstorm_warnings) {
                 tstorm = data.amount_tstorm_warnings;
                 tstorm_count.innerText = tstorm;
                 tstorm_count.parentElement.parentElement.classList.add('got-update');
+                playSound();
             }
 
             if (tornado !== data.amount_tornado_warnings) {
                 tornado = data.amount_tornado_warnings;
                 tornado_count.innerText = tornado;
                 tornado_count.parentElement.parentElement.classList.add('got-update');
+                playSound();
             }
 
             await new Promise((resolve) => setTimeout(resolve, interval));
@@ -244,8 +246,10 @@
             big_map.setAttribute('src', data.map_path);
             selected_warning_type = warningType;
             renderWarnings(old_warning_data);
-            clearInterval(interval_id);
-            interval_id = setInterval(lastUpdated, 1000);
+            // clearInterval(interval_id);
+            // if(!interval_id) {
+            //     interval_id = setInterval(lastUpdated, 1000);
+            // }
 
             if(old_warning_data.length) {
                 console.log('warning label show...')

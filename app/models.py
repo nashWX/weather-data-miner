@@ -27,6 +27,8 @@ class AccessPassword(models.Model):
     coordinates = models.JSONField(verbose_name='Location Coordinates', null=True)
     lat = models.FloatField(verbose_name='Latitude center of coordinates', max_length=24, null=True)
     long = models.FloatField(verbose_name='Longitude center of coordinates', max_length=24, null=True)
+    width = models.IntegerField(verbose_name='Width of the map', default=3)
+    height = models.IntegerField(verbose_name='Height of the map', default=5)
     coordinate_type = models.CharField(
         max_length=20,
         choices=CoordinateType.choices,

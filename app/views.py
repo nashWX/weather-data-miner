@@ -85,7 +85,7 @@ def activeReport(request):
        'amount_flood_warnings': len(Warning.get_warnings('FLOOD', start_time, end_time, user)),
        'last_update': cache.get('tornado_last_update')
     }
-    context['map_path'] = generate_map(lats=user.lat, lons=user.long, withMarker=False)
+    context['map_path'] = generate_map(lats=user.lat, lons=user.long, withMarker=False, width=user.width or 3, height=user.height or 5)
     return render(request, 'active-report.html', context=context)
 
 
@@ -124,7 +124,7 @@ def warningList(request):
 
     context = {
         'warnings': warnings,
-        'map_path': generate_map(lats=user.lat, lons=user.long, points=[lats, longs]),
+        'map_path': generate_map(lats=user.lat, lons=user.long, points=[lats, longs], width=user.width or 3, height=user.height or 5),
         'last_update': last_update,
     }
     return JsonResponse(context, safe=False)

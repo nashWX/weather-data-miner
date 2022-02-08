@@ -12,7 +12,7 @@ returnPath = ''
 agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.72 Safari/537.36 Edg/90.0.818.42"
 
 
-def generate_map(lats=None, lons=None, place_id=None, withMarker=True, points=None):
+def generate_map(lats=None, lons=None, place_id=None, withMarker=True, points=None, width=None, height=None):
 
     #create new directory if not exists
     Path(saveLocation).mkdir(parents=True, exist_ok=True)
@@ -42,9 +42,20 @@ def generate_map(lats=None, lons=None, place_id=None, withMarker=True, points=No
         return  returnPath
     
     try:
-        m = Basemap(projection='merc',llcrnrlat=lats-2,urcrnrlat=lats+2,\
-                    llcrnrlon=lons-4, urcrnrlon=lons+4, resolution='l', area_thresh=100)
+        m = None
+        if width and height:
+            latbox1=lats-width
+            latbox2=lats+width
+            lonbox1=lons-height
+            lonbox2=lons+height
+            m = Basemap(projection='merc',llcrnrlat=latbox1,urcrnrlat=latbox2,\
+                llcrnrlon=lonbox1, urcrnrlon=lonbox2, resolution='l', area_thresh=15)
+        else:
+            m = Basemap(projection='merc',llcrnrlat=lats-2,urcrnrlat=lats+2,\
+                        llcrnrlon=lons-4, urcrnrlon=lons+4, resolution='l', area_thresh=100)
+
         x,y = m(lons, lats)
+
         if points:
             x,y = m(points[1], points[0])
 

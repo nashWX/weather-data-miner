@@ -647,7 +647,10 @@ a.weather-info.hashtag .map {
         height: 50px;
         position: absolute;
         left: -30px;
-        top: -4px;
+        /* top: -4px; */
+    }
+    .subject-btn .btn-content .icon {
+        top: -14px;
     }
 }
 
@@ -776,6 +779,9 @@ a.weather-info.hashtag .map {
         width: 90%;
         margin-left: auto;
     }
+    .subject-btn .btn-content .icon {
+        top: -24px;
+    }
 }
 
 @media screen and (min-width: 768px) and (max-width: 991px) {
@@ -881,7 +887,9 @@ a.weather-info.hashtag .map {
 }
 
 @media screen and (max-width: 767px) {
-
+    .subject-btn .btn-content .icon {
+        top: -26px;
+    }
     .mb-xs-4 {
         margin-bottom: 1rem;
     }
@@ -954,7 +962,6 @@ a.weather-info.hashtag .map {
         left: 20%;
         width: 59%;
     }
-
 }
 
 
@@ -1068,6 +1075,10 @@ a.weather-info.hashtag .map {
     .weather-info.hashtag::after {
         left: 15%;
         width: 70%;
+    }
+
+    .subject-btn .btn-content .icon {
+        top: -12px;
     }
 }
 
@@ -1319,6 +1330,9 @@ a.weather-info.hashtag .map {
     }
 }
 @media screen and (max-width: 320px) {
+    .subject-btn .btn-content .icon {
+        top: -4px;
+    }
     .weather-info.flood .time-stamp {
         left: 16.5%;
         width: 75%;
