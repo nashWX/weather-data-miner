@@ -96,10 +96,14 @@ def hashtags(request):
     return render(request, 'hashtags.html', context={'hash_tags': hashes})
 
 def warning_update(request):
-    access_id = request.session.get('access_id')
+    zone = config('timezone', cast=str, default='America/New_York')
+    end_time =  dt.datetime.now(tz=pytz.timezone(zone))
     start_time = isoparse(request.session.get('starttime'))
-    end_time = isoparse(request.session.get('endtime'))
+    request.session['endtime'] = end_time.strftime('%Y-%m-%d %I:%M %p')
+
+    access_id = request.session.get('access_id')
     user = AccessPassword.objects.filter(id=access_id).first()
+    
     context = {
         'amount_tornado_warnings': len(Warning.get_warnings('TORNADO', start_time, end_time, user)),
         'amount_tstorm_warnings': len(Warning.get_warnings('TSTORM', start_time, end_time, user)),
