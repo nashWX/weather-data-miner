@@ -143,14 +143,15 @@
     }
 
     function lastUpdated() {
-      const d1 = new Date(last_update);
-      const d2 = new Date();
-      const h = Math.max(0, d2.getHours() - d1.getHours());
-      const m = Math.max(0, d2.getMinutes() - d1.getMinutes());
-      const s = Math.max(0, d2.getSeconds() - d1.getSeconds());
-      timer_h.innerText = `${h < 10 ? '0'+h : h}`;
-      timer_m.innerText = `:${m < 10 ? '0'+m : m}:`;
-      timer_s.innerText = `${s < 10 ? '0'+s : s}`;
+        const countDownDate = new Date(last_update).getTime();
+        const now = new Date().getTime();
+        const timeleft = now - countDownDate;
+        const h = Math.floor((timeleft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const m = Math.floor((timeleft % (1000 * 60 * 60)) / (1000 * 60));
+        const s = Math.floor((timeleft % (1000 * 60)) / 1000);
+        timer_h.innerText = `${h < 10 ? '0'+h : h}`;
+        timer_m.innerText = `:${m < 10 ? '0'+m : m}:`;
+        timer_s.innerText = `${s < 10 ? '0'+s : s}`;
     }
 
     var interval_id = setInterval(lastUpdated, 1000);
@@ -171,7 +172,7 @@
 
     async function subscribeWarningUpdate() {
         const response = await fetch('/warning-update');
-        const interval = (1000 * 60 * 2);
+        const interval = (1000 * 60 * 1);
         if (selected_warning_type) {
             const data = (await fetch(`/warning-list?type=${selected_warning_type}`).then(resp => resp.json())) || [];
             const partial_data = data.warnings.filter(item => !old_warning_data.contains(item))
