@@ -16,6 +16,7 @@ def authorize(request):
         current_user = AccessPassword.objects.filter(password=userpassword).first()
         starttime = request.POST.get('starttime')
         endtime = request.POST.get('endtime')
+        print(endtime)
         if current_user.password == userpassword and starttime and endtime:
             request.session['starttime'] = starttime
             request.session['endtime'] = endtime
@@ -77,7 +78,7 @@ def activeReport(request):
 
     access_id = request.session.get('access_id')
     start_time = isoparse(request.session.get('starttime'))
-    end_time = isoparse(request.session.get('endtime'))
+    end_time = isoparse(request.session.get('endtime')) + dt.timedelta(hours=12)
     user = AccessPassword.objects.filter(id=access_id).first()
     context = {
        'amount_tornado_warnings': len(Warning.get_warnings('TORNADO', start_time, end_time, user)),
@@ -96,14 +97,13 @@ def hashtags(request):
     return render(request, 'hashtags.html', context={'hash_tags': hashes})
 
 def warning_update(request):
-    zone = config('timezone', cast=str, default='America/New_York')
-    end_time =  dt.datetime.now(tz=pytz.timezone(zone))
+    # zone = config('timezone', cast=str, default='America/New_York')
+    # end_time =  dt.datetime.now(tz=pytz.timezone(zone))
     start_time = isoparse(request.session.get('starttime'))
-    request.session['endtime'] = end_time.strftime('%Y-%m-%d %I:%M %p')
-
+    end_time = isoparse(request.session.get('endtime')) + dt.timedelta(hours=12)
     access_id = request.session.get('access_id')
     user = AccessPassword.objects.filter(id=access_id).first()
-    
+
     context = {
         'amount_tornado_warnings': len(Warning.get_warnings('TORNADO', start_time, end_time, user)),
         'amount_tstorm_warnings': len(Warning.get_warnings('TSTORM', start_time, end_time, user)),
@@ -116,7 +116,7 @@ def warning_update(request):
 def warningList(request):
     access_id = request.session.get('access_id')
     start_time = isoparse(request.session.get('starttime'))
-    end_time = isoparse(request.session.get('endtime'))
+    end_time = isoparse(request.session.get('endtime')) + dt.timedelta(hours=12)
     user = AccessPassword.objects.filter(id=access_id).first()
 
     warnings = Warning.get_warnings(request.GET.get('type').upper(), start_time, end_time, user)
