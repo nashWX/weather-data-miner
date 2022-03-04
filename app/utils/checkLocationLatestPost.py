@@ -45,7 +45,7 @@ def checkPool(warnings=[], start_time=0, sessionid=None):
     success_results = []
     failed_results = []
     for warning in warnings:
-        success = checkPostExistsOnThisLocation(warning, start_time, sessionid=None)
+        success = checkPostExistsOnThisLocation(warning, start_time, sessionid=sessionid)
         if success == True:
             success_results.append(warning)
         elif success == False:
