@@ -4,6 +4,7 @@ import random
 import concurrent.futures
 import numpy as np
 import random
+from decouple import config
 
 user_agents = [
     "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)",
@@ -17,10 +18,8 @@ def checkPostExistsOnThisLocation(warning=None, timestamp=0, sessionid=None):
     headers = {"user-agent": random.choice(user_agents)}
     cookies = {"sessionid": sessionid}
     proxies={
-        # "http": "http://ylnmpdzr-rotate:fcyzrvj2mpa3@p.webshare.io:80/",
-        # "https": "http://ylnmpdzr-rotate:fcyzrvj2mpa3@p.webshare.io:80/"
-        "http": "http://qugpmcee-rotate:9quzip0643oo@p.webshare.io:80/",
-        "https": "http://qugpmcee-rotate:9quzip0643oo@p.webshare.io:80/"
+        "http": config('PROXY_URL', cast=str, default='http://qugpmcee-rotate:9quzip0643oo@p.webshare.io:80/'),
+        "https": config('PROXY_URL', cast=str, default='http://qugpmcee-rotate:9quzip0643oo@p.webshare.io:80/')
     }
 
     try:
