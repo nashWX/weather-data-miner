@@ -8,7 +8,8 @@ async def download_media(url='https://www.instagram.com/p/CeJUPtRJyhI/?utm_sourc
         'headless': True,   
         'handleSIGINT':False,
         'handleSIGTERM':False,
-        'handleSIGHUP':False
+        'handleSIGHUP':False,
+        'args': ['--no-sandbox', '--disable-setuid-sandbox']
     })
     page = await browser.newPage()
     links = []
