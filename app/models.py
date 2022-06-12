@@ -187,7 +187,7 @@ class Warning(models.Model):
         choices=WarningType.choices,
         default=WarningType.TORNADO,
     )
-
+    warning_label = models.CharField(verbose_name='Warning Label', max_length=120, null=True, blank=True)
     def __str__(self) -> str:
         start = timezone.localtime(self.start_time, pytz.timezone(self.timezone))
         end = timezone.localtime(self.end_time, pytz.timezone(self.timezone))
@@ -270,13 +270,13 @@ class Warning(models.Model):
         if cache.get(key) and len(cache.get(key)) == len(warnings):
             return cache.get(key)
 
-        util = Util.objects.first()
+        # util = Util.objects.first()
 
-        if warnings and util.turn_on_filtering and util.insta_sessionid:
-            warnings = filterWarningByPost(warnings, datetime.timestamp(start_time))
-            cache.set(key, warnings, cache_timeout)
-        else:
-            cache.set(key, warnings, cache_timeout)
+        # if warnings and util.turn_on_filtering and util.insta_sessionid:
+        #     warnings = filterWarningByPost(warnings, datetime.timestamp(start_time))
+        #     cache.set(key, warnings, cache_timeout)
+        # else:
+        cache.set(key, warnings, cache_timeout)
         
         return warnings
     
@@ -284,6 +284,7 @@ class Warning(models.Model):
     def formated(self):
         return {
             "warning_type": self.warning_type.lower(),
+            'warning_label': self.warning_label,
             "start": self.start,
             "end": self.end,
             "location": {

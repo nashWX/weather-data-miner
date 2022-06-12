@@ -1,0 +1,134 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block styleblock %}
+<style>
+    /* make .clear button position absolute from right of the .form-control element */
+    .clear {
+        position: absolute !important;
+        right: 10.54%;
+        height: 100%;
+    }
+
+    .right-0 {
+        right: 0;
+    }
+</style>
+{% endblock %}
+{% block content %}
+{% include 'header.html' %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <form>
+                <div class="input-group mt-4 mb-2 position-relative">
+                    <input type="text" class="form-control form-control-lg" id="url" placeholder="Enter url..."
+                        aria-label="Enter url..." aria-describedby="button-addon2">
+                    <!-- create an absolute positioned button for clear form input with bootstrap class -->
+                    <button class="clear btn btn-outline-warning">clear</button>
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-primary btn-lg" id="search-button" type="button"
+                            id="button-addon2">Search</button>
+                    </div>
+                </div>
+                <!-- create a progress bar with bootstrap classes that will show waiting time for download -->
+                <div class="progress" style="display: none; height: 6px;">
+                    <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" id="progressbar" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        
+        <div class="row mt-4" id="download-items-container">
+            
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+    document.addEventListener("DOMContentLoaded", function (event) {
+        var downloadId = null;
+        var intervalId = null;
+        var progressBarWidth = 10;
+        const searchButton = document.getElementById('search-button');
+        const progressBar = document.getElementById('progressbar');
+        // get meta value name `csrf-token`
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+        searchButton?.addEventListener("click", (e) => {
+            e.preventDefault();
+            const url = document.getElementById('url').value;
+            progressBarWidth = 10;
+            if (url) {
+                progressBar.parentElement.style.display = 'flex';
+                progressBar.style.width = progressBarWidth + '%';
+                intervalId = setInterval(checkDownloadStatus, 1500);
+                fetch('/download-media', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrfToken
+                    },
+                    body: JSON.stringify({
+                        url: url,
+                    }),
+                    credentials: 'same-origin',
+                }).then(response => response.json())
+                .then(data => {
+                    updateLayoutContent(data.links);
+                    progressBar.parentElement.style.display = "none";
+                    progressBarWidth = 10;
+                    clearInterval(intervalId);
+                   
+                })
+                .catch(err => {
+                    console.log(err);
+                    progressBar.parentElement.style.display = "none";
+                    progressBarWidth = 10;
+                    clearInterval(intervalId);
+                });
+            }
+        })
+
+        function checkDownloadStatus() {
+            if (progressBarWidth < 100) {
+                progressBarWidth += 10;
+                progressBar.style.width = progressBarWidth + '%';
+            }
+        }
+
+        document.querySelector(".clear").addEventListener("click", function (e) {
+            e.preventDefault();
+            progressBarWidth = 10;
+            document.getElementById('url').value = "";
+        });
+    });
+
+    function updateLayoutContent(data = []) {
+        const container = document.getElementById('download-items-container');
+        container.innerHTML='';
+        elements = ``
+        data.forEach(item => {
+            elements += `
+                <div class="col-xl-3 col-lg-4 col-md-4 col-sm-2 col-12 mb-4">
+                    <div class="card">
+                        <img src="${item.cover}" class="card-img-top" alt="...">
+        
+                        <a href="${item.url}" class="btn btn-outline-info position-absolute left-0">
+                            <i class="bi bi-cloud-arrow-down-fill"></i>
+                            download
+                        </a>
+                        <a href="#"  class="btn btn-success text-white position-absolute right-0">
+                            ${item.isVideo ? '<i class="bi bi-camera-video"></i>' : '<i class="bi bi-card-image"></i>'}
+                        </a>
+                    </div>
+                </div>
+            `;
+        });
+        container.innerHTML = elements;
+    }
+</script>
+{% endblock %}

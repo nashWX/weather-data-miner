@@ -56,26 +56,3 @@ def handleExport():
 
 def handleOnlyIdExport():
     asyncio.run(exportOnlyId())
-
-
-
-
-async def testInstagramy():
-    i=0
-    async with aiofiles.open(settings.BASE_DIR/'static'/'check_files'/'locations__id.txt', 'r') as f:
-        async for line in f:
-            try: 
-                # location = InstaLocation(line.strip('\n').strip(), "", '4526877383%3A73r9DocYUXeRMk%3A15')
-                location = InstaLocation(line.strip('\n').strip(), "", '4526877383%3A73r9DocYUXeRMk%3A15')
-            except Exception as e: 
-                print("no (location not existant)")
-                print('-----------------')
-                print(e)
-            i += 1
-            print(i)
-            if i == 1000:
-                break
-    print('test complete ', i)
-
-def runTest():
-    asyncio.run(testInstagramy())

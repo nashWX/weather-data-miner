@@ -16,8 +16,8 @@ class AccessPasswordAdmin(admin.ModelAdmin):
 class WarningAdmin(admin.ModelAdmin):
     change_list_template = "admin/change_list_filter_sidebar.html"
     search_fields = ['location__state_name', 'location__city_name']
-    list_display = ('location', 'warning_type', '_start_time', '_end_time')
-    list_filter = ("start_time", "end_time", 'warning_type', 'location__state_name', 'location__city_name')
+    list_display = ('location', 'warning_type', 'warning_label', '_start_time', '_end_time')
+    list_filter = ("start_time", "end_time", 'warning_type', 'warning_label', 'location__state_name', 'location__city_name')
     ordering = ('-start_time', '-end_time')
 
     def _start_time(self, obj):

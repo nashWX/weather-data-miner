@@ -24,7 +24,7 @@
                                 {{amount_tornado_warnings}}
                             </span>
                             <span class="btn-text">
-                                TORNADO Warnings
+                                TORNADO Warned Locations
                             </span>
                         </span>
                     </button>
@@ -41,7 +41,7 @@
                                 {{amount_tstorm_warnings}}
                             </span>
                             <span class="btn-text">
-                                T-Storms Warnings
+                                T-Storms Warned Locations
                             </span>
                         </span>
                     </button>
@@ -58,7 +58,7 @@
                                 {{amount_flood_warnings}}
                             </span>
                             <span class="btn-text">
-                                FLOOD Warnings
+                                FLOOD Warned Locations
                             </span>
                         </span>
                     </button>
@@ -83,7 +83,7 @@
             <div class="col-12">
                 <center>
                     <div class="posts-label">
-                        <h3 class="header-subtitle report-title">Locations with new posts</h3>
+                        <h3 class="header-subtitle report-title">Locations with New Posts</h3>
                     </div>
                 </center>
 
@@ -116,6 +116,9 @@
         const audio = new Audio('/static/audio/tone.mp3');
         audio.play();
         audio.remove();
+    }
+    function concat(str) {
+        return str.toLowerCase().replace(/\s/g, '-');
     }
     Array.prototype.contains = function (obj1) {
         const elements = this;
@@ -277,6 +280,7 @@
                                 <div class="starttime">${warning.start}</div>
                                 <div class="endtime">${warning.end}</div>
                             </div>
+                            ${warning.warning_label ? `<div class="label ${concat(warning.warning_label)}">${warning.warning_label}</div>`: ''}
                             <div class="map">
                                 <img src="${warning.location.location_map ?? '/media/img/2683391338749083463_map.png'}" alt="map">
                             </div>
@@ -299,6 +303,7 @@
                                 <div class="starttime">${warning.start}</div>
                                 <div class="endtime">${warning.end}</div>
                             </div>
+                            ${warning.warning_label ? `<div class="label ${concat(warning.warning_label)}">${warning.warning_label}</div>`: ''}
                             <div class="map">
                                 <img src="${warning.location.location_map}" alt="map">
                             </div>

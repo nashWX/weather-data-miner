@@ -1,8 +1,13 @@
+import asyncio
+import json
+import uuid
 from decouple import config
 from django.http.response import JsonResponse
 from django.shortcuts import render, redirect, reverse
 from django.contrib import messages
 from django.core.cache import cache
+
+from .utils.download_media import download_media
 from .utils.generate_map import generate_map
 from .models import AccessPassword, HashTag, Util, Warning
 from dateutil.parser import isoparse
@@ -13,19 +18,24 @@ from django.utils import timezone
 def authorize(request):
     if request.method == 'POST':
         userpassword = request.POST.get('password')
-        current_user = AccessPassword.objects.filter(password=userpassword).first()
-        starttime = request.POST.get('starttime')
-        endtime = request.POST.get('endtime')
-        print(endtime)
-        if current_user.password == userpassword and starttime and endtime:
-            request.session['starttime'] = starttime
-            request.session['endtime'] = endtime
-            request.session['authenticate'] = True
-            request.session['access_id'] = current_user.id
-            return redirect(reverse('active-report'))
-        else:
+        current_user = None
+        try:
+            current_user = AccessPassword.objects.filter(password=userpassword).first()
+            starttime = request.POST.get('starttime')
+            endtime = request.POST.get('endtime')
+            if current_user.password == userpassword and starttime and endtime:
+                request.session['starttime'] = starttime
+                request.session['endtime'] = endtime
+                request.session['authenticate'] = True
+                request.session['access_id'] = current_user.id
+                return redirect(reverse('active-report'))
+            else:
+                messages.add_message(request, messages.WARNING, 'invalid info provided, please provide correct data')
+                return redirect(reverse('authorize'))
+        except Exception as e:
             messages.add_message(request, messages.WARNING, 'invalid info provided, please provide correct data')
             return redirect(reverse('authorize'))
+
     zone = config('timezone', cast=str, default='America/New_York')
     past_30 = dt.datetime.now(tz=pytz.utc) - dt.timedelta(minutes=30)
     past_hour = dt.datetime.now(tz=pytz.utc) - dt.timedelta(hours=1)
@@ -135,3 +145,20 @@ def warningList(request):
 
 def about(request):
     return render(request, 'about.html')
+
+def download(request):
+    if not request.session.get('authenticate'):
+        messages.add_message(request, messages.WARNING, 'you are not authorized to visit the download media page')
+        return redirect(reverse('authorize'))
+    
+    if request.method == 'POST':
+        body = json.loads(request.body.decode('utf-8'))
+        url = body['url']
+        if url:
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            loop = asyncio.get_event_loop()
+            links = loop.run_until_complete(download_media(url))
+            return JsonResponse({'links': links, 'status': "success"})
+        return JsonResponse({'status': "error"})
+    return render(request, 'download.html')

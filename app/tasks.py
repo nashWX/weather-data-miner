@@ -1,7 +1,7 @@
 import asyncio
 import os
 from datetime import datetime
-from celery import shared_task
+from celery import shared_task, current_app
 from pyppeteer import launch
 from django.db.models import Q
 from django.core.cache import cache
@@ -12,6 +12,8 @@ from .utils.update_location import update_location
 from .utils.get_hashtag import get_hashtag
 from .utils.retrive_warnings import retrieveWarnings
 from .utils.generate_map import generate_map
+from .utils.download_media import download_media
+
 from .utils.helpers import (
     userAgent,
     get_population_from_wiki
@@ -37,6 +39,9 @@ def flood_warning():
         asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
     cache.set('flood_last_update', datetime.now(tz=pytz.utc).strftime('%Y-%m-%dT%H:%M:%S%z'), None)
     asyncio.run(retrieveWarnings(event='FLOOD'))
+
+
+
 
 @shared_task
 def update_location_map(id:int):

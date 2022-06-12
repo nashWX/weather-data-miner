@@ -53,15 +53,17 @@ async def retrieveWarnings(event='TORNADO'):
         # 2. Get warning times, given in local time so need to convert to UTC
         if not warning['properties']['effective'] or not warning['properties']['ends']:
             continue
-        
         warningStart = warning['properties']['effective']
         warningEnd = warning['properties']['ends']
         warning_start = local_to_UTC(warningStart)
         warning_end = local_to_UTC(warningEnd)
         current_time =  dt.datetime.now(tz=dt.timezone.utc) - dt.timedelta(days=1)
         warning_delete_end =  dt.datetime.now(tz=dt.timezone.utc) - dt.timedelta(days=2)
+        warningLabel = None
+        
+        
   
-       
+
         if current_time > warning_end:
             continue        
         
@@ -72,6 +74,29 @@ async def retrieveWarnings(event='TORNADO'):
         warning_text = warning['properties']['description']
         #print(warning_text)
         
+        try:
+            if event == 'TSTORM':
+                p = warning['properties']['parameters']
+                if p and p.get('thunderstormDamageThreat') and len(p.get('thunderstormDamageThreat', [])) > 0:
+                    if 'DESTRUCTIVE' in p['thunderstormDamageThreat']:
+                        warningLabel = 'Destructive'
+                    elif 'CONSIDERABLE' in p['thunderstormDamageThreat']:
+                        warningLabel = 'Considerable'
+                        
+            elif event == 'FLOOD':
+                if 'emergency' in warning_text.lower():
+                    warningLabel = 'Emergency'
+            elif event == 'TORNADO':
+                if 'emergency' in warning_text.lower():
+                    warningLabel = 'Tornado Emergency'
+                elif 'particularly dangerous situation' in warning_text.lower():
+                    warningLabel = 'PDS WARNING'
+                elif 'Observed' == warning['properties']['certainty']:
+                    warningLabel = 'Tornado Observed'
+        except Exception as e:
+            print('errr ---------------------- ')
+            print(e)
+
         # 4. Retrieve all possible places.
         # One feature of the descriptions is that locations are only mentioned
         # after "Tornado Warning for...", can get rid of everything before this.
@@ -118,6 +143,7 @@ async def retrieveWarnings(event='TORNADO'):
                     start_time=warning_start,
                     end_time=warning_end,
                     warning_type=event,
+                    warning_label=warningLabel
                 )
                 if created:
                     print(f'{location} -> {warning_start} -> {warning_end}')
