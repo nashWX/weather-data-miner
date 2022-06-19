@@ -316,10 +316,10 @@ active report page styles end
 }
 
 .subject-btn {
-    height: 100px;
+    height: 85px;
     display: flex;
     width: 68%;
-    margin-bottom: 2rem;
+    margin-bottom: 3rem;
     border: 10px solid;
     border-radius: 45px / 15px;
     background-image: linear-gradient(#14D4CF, #2FABE5);
@@ -377,8 +377,8 @@ active report page styles end
 }
 
 .subject-btn .btn-content .icon {
-    width: 80px;
-    height: 80px;
+    width: 68px;
+    height: 68px;
     position: absolute;
     left: -50px;
     top: -10px;
@@ -650,7 +650,18 @@ a.weather-info.hashtag .map {
     left: 30%;
 }
 
+.clear {
+    position: absolute !important;
+    right: 8%;
+    height: 100%;
+}
+.warning-types {
+    margin-top: 0.4rem;
+}
 @media screen and (max-width: 776px) {
+    .clear {
+        right: 15%;
+    }
     .home-logo {
         display: none;
     }
@@ -667,6 +678,7 @@ a.weather-info.hashtag .map {
     .subject-btn {
         width: 70%;
         height: 83px;
+        margin-bottom: 1.8rem;
     }
 
     .subject-btn .btn-content {
@@ -743,6 +755,9 @@ a.weather-info.hashtag .map {
 }
 
 @media screen and (min-width: 992px) and (max-width: 1198px) {
+    .clear {
+        right: 11%;
+    }
     .map {
         left: 22%;
     }
@@ -997,6 +1012,9 @@ a.weather-info.hashtag .map {
 
 
 @media screen and (max-width: 575px) {
+    .clear {
+        display: none;
+    }
     .weather-info {
         height: 571px;
     }
@@ -1264,7 +1282,7 @@ a.weather-info.hashtag .map {
 }
 @media screen and (max-width: 375px) {
     .subject-btn .btn-content {
-        font-size: 1rem;
+        font-size: 0.9rem;
     }
 
     .weather-info.flood .time-stamp {
@@ -1607,4 +1625,22 @@ p.last-time .m {
     font-size: 1.5em;
     margin: 0 auto;
     color: #357e86;
+}
+
+.download-btn {
+    border-color: #14D4CF;
+    color: #14D4CF;
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+.download-btn:hover {
+    background-color: #14D4CF;
+    border-color: #14D4CF;
+    color: #000;
+}
+.clear {
+    color: #14D4CF;
+    border-color: #14D4CF;
+    box-shadow: none !important;
 }
