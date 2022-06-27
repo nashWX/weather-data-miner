@@ -735,7 +735,9 @@ a.weather-info.hashtag .map {
     }
 
     .report-page .weather-info.tornado:hover::after,
-    .report-page .weather-info.tstorm:hover::after {
+    .report-page .weather-info.tstorm:hover::after,
+    .report-page .weather-info.tstorm::after,
+    .report-page .weather-info.tornado::after {
         left: -3%;
         width: 106%;
     }
@@ -1249,9 +1251,6 @@ a.weather-info.hashtag .map {
     }
 }
 
-.weather-info.visited {
-    opacity: 0.5;
-}
 @media screen and (max-width: 400px) {
     .report-page .weather-info.tornado::after {
         left: 7%;
