@@ -1180,7 +1180,7 @@ a.weather-info.hashtag .map {
     .weather-info.tstorm .map {
         left: 20%;
         top: 41%;
-        width: 235px;
+        width: 241px;
         height: 161px;
     }
 
@@ -1226,20 +1226,20 @@ a.weather-info.hashtag .map {
 
     .report-page .weather-info.tstorm::after {
         top: 8px;
-        left: 8.5%;
-        width: 82%;
+        left: 10.5%;
+        width: 78%;
         height: 83%;
     }
 
     .report-page .weather-info.flood::after {
-        left: 12%;
-        width: 82%;
+        left: 14%;
+        width: 77%;
     }
 
     .report-page .weather-info.tornado::after {
-        left: 9%;
-        top: 2px;
-        width: 83%;
+        left: 11%;
+        top: 4px;
+        width: 79%;
         height: 84%;
     }
 
@@ -1253,8 +1253,8 @@ a.weather-info.hashtag .map {
 
 @media screen and (max-width: 400px) {
     .report-page .weather-info.tornado::after {
-        left: 7%;
-        width: 87%;
+        left: 9%;
+        width: 83%;
     }
     .weather-info.tornado .time-stamp {
         left: 16%;
@@ -1263,13 +1263,13 @@ a.weather-info.hashtag .map {
 
     .report-page .weather-info.tstorm::after {
         top: 8px;
-        left: 6%;
-        width: 87%;
+        left: 8%;
+        width: 83%;
         height: 83%;
     }
     .report-page .weather-info.flood::after {
-        left: 10%;
-        width: 86%;
+        left: 12%;
+        width: 82%;
     }
 
     .weather-info.hashtag::after {
@@ -1313,7 +1313,7 @@ a.weather-info.hashtag .map {
     .weather-info.flood .map {
         left: 22%;
         top: 41.4%;
-        width: 230px;
+        width: 235px;
         height: 154px;
     }
 
@@ -1363,19 +1363,19 @@ a.weather-info.hashtag .map {
     }
 
     .report-page .weather-info.flood::after {
-        left: 8%;
-        width: 90%;
+        left: 10%;
+        width: 86%;    
     }
     .report-page .weather-info.tornado::after {
-        left: 4%;
-        top: 2px;
-        width: 92%;
+        left: 7%;
+        top: 4px;
+        width: 86%;
         height: 84%;
     }
 
-   .report-page .weather-info.tstorm::after {
-        left: 4%;
-        width: 91%;
+    .report-page .weather-info.tstorm::after {
+        left: 6%;
+        width: 87%;
     }
 
     .weather-info.hashtag::after {
@@ -1390,20 +1390,22 @@ a.weather-info.hashtag .map {
 }
 @media screen and (min-width: 321px) and (max-width: 374px) {
     .report-page .weather-info.tornado::after {
-        left: 3%;
-        width: 95%;
+        left: 5%;
+        width: 91%;
     }
     .weather-info.tornado .time-stamp {
         left: 14%;
         width: 70%;
     }
     .report-page .weather-info.tstorm::after {
-        left: 2%;
-        width: 94%;
+        left: 5%;
+        width: 90%;
     }
     .report-page .weather-info.flood::after {
-        left: 7%;
-        width: 93%;
+        left: 9%;
+        width: 88%;
+        top: 12px;
+        height: 82%;
     }
     .weather-info.hashtag::after {
         left: 4%;
