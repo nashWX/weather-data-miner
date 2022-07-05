@@ -23,12 +23,14 @@ class AccessPassword(models.Model):
         POINT = 'Point', 'Point'
 
     password = models.CharField(verbose_name="Access Password", max_length=12)
-    name = models.CharField(max_length=255, verbose_name='User Name', blank=True, null=True)
+    name = models.CharField(max_length=255, verbose_name='User Name', blank=False, null=True)
     coordinates = models.JSONField(verbose_name='Location Coordinates', null=True)
     lat = models.FloatField(verbose_name='Latitude center of coordinates', max_length=24, null=True)
     long = models.FloatField(verbose_name='Longitude center of coordinates', max_length=24, null=True)
-    width = models.IntegerField(verbose_name='Width of the map', default=3)
-    height = models.IntegerField(verbose_name='Height of the map', default=5)
+    # width = models.IntegerField(verbose_name='Width of the map', default=3)
+    # height = models.IntegerField(verbose_name='Height of the map', default=5)
+    lats_bounds = models.CharField(verbose_name='Lats Bounds', help_text='Enter lats separated by comma, eg. 23.11,20.1', max_length=255, null=True, blank=False)
+    lons_bounds = models.CharField(verbose_name='Lons Bounds', help_text='Enter lons separated by comma, eg. 100.11,205.1', max_length=255, null=True, blank=False)
     coordinate_type = models.CharField(
         max_length=20,
         choices=CoordinateType.choices,
@@ -45,6 +47,34 @@ class AccessPassword(models.Model):
     
     def __str__(self) -> str:
         return str(self.name)
+    
+    @property
+    def place_name(self):
+        return self.name.replace(" ", "_").lower()
+    
+    @property
+    def location_coordinate(self):
+        lats = []
+        lons = []
+        data = json.loads(self.coordinates)
+        if self.coordinate_type == self.CoordinateType.MULTI_POLYGON:
+            for coordinates in data:
+                for coordinate in coordinates:
+                    for item in coordinate:
+                        lons.append(item[0])
+                        lats.append(item[1])
+        elif self.coordinate_type == self.CoordinateType.POLYGON:
+            for coordinate in data:
+                for item in coordinate:
+                    lons.append(item[0])
+                    lats.append(item[1])
+        
+        return lats, lons
+    
+    @property
+    def big_map(self):
+        return f"/media/big_map/{self.place_name}.png"
+    
 
 
 class Util(models.Model):

@@ -7,6 +7,7 @@ from django.shortcuts import render, redirect, reverse
 from django.contrib import messages
 from django.core.cache import cache
 
+from .utils.big_map import big_map
 from .utils.download_media import download_media
 from .utils.generate_map import generate_map
 from .models import AccessPassword, HashTag, Util, Warning
@@ -96,7 +97,15 @@ def activeReport(request):
        'amount_flood_warnings': len(Warning.get_warnings('FLOOD', start_time, end_time, user)),
        'last_update': cache.get('tornado_last_update')
     }
-    context['map_path'] = generate_map(lats=user.lat, lons=user.long, withMarker=False, width=user.width or 3, height=user.height or 5)
+    # context['map_path'] = generate_map(lats=user.lat, lons=user.long, withMarker=False, width=user.width or 3, height=user.height or 5)
+    if not user.lats_bounds or not user.lats_bounds:
+        messages.add_message(request, messages.WARNING, 'You have not set lats_bounds and lons_bounds for this user, please update these fields from admin panel to access this page')
+        return redirect(reverse('authorize'))
+    
+    lats, lons = user.location_coordinate
+    lats_bounds = user.lats_bounds.split(',')
+    lons_bounds = user.lons_bounds.split(',')
+    context['map_path'] = big_map(lats_bounds=lats_bounds,lons_bounds=lons_bounds, lats=lats, lons=lons, place_name=user.place_name)
     return render(request, 'active-report.html', context=context)
 
 
@@ -131,16 +140,23 @@ def warningList(request):
 
     warnings = Warning.get_warnings(request.GET.get('type').upper(), start_time, end_time, user)
     lats = [warning.location.lat for warning in warnings]
-    longs = [warning.location.lng for warning in warnings]
+    lons = [warning.location.lng for warning in warnings]
     warnings = [warning.formated for warning in warnings]
     key = f"{request.GET.get('type')}_last_update"
     last_update = cache.get(key)
 
     context = {
         'warnings': warnings,
-        'map_path': generate_map(lats=user.lat, lons=user.long, points=[lats, longs], width=user.width or 3, height=user.height or 5),
+        # 'map_path': generate_map(lats=user.lat, lons=user.long, points=[lats, longs]),
         'last_update': last_update,
     }
+
+    lats_bounds = user.lats_bounds.split(',')
+    lons_bounds = user.lons_bounds.split(',')
+    coordinate = lats + lons
+    map_name = str(str(coordinate).__hash__())
+    context['map_path'] = big_map(lats_bounds=lats_bounds,lons_bounds=lons_bounds, lats=lats, lons=lons, place_name=map_name, marker=True)
+
     return JsonResponse(context, safe=False)
 
 def about(request):
