@@ -56,7 +56,7 @@ async def updateLocationFromTxt():
             try:
                 data = line.strip().split(';')
                 loc = await sync_to_async(Location.objects.filter)(
-                    city_name__iexact=data[1],
+                    name__iexact=f"{data[1]}, {data[2]}",
                 )
 
                 loc =  await sync_to_async(loc.first)()
@@ -64,6 +64,8 @@ async def updateLocationFromTxt():
                 if loc is None:
                     loc = await sync_to_async(Location.objects.create)(
                         city_name=data[1],
+                        name=f"{data[1]}, {data[2]}",
+                        state_name = data[2]
                     )
                 loc.location_id = data[0]
                 loc.lat = data[3]
