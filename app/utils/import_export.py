@@ -3,8 +3,8 @@ import aiofiles
 from asgiref.sync import sync_to_async
 from django.conf import settings
 from app.models import Location
-from instagramy import InstagramLocation
-from .InstaLocation import InstaLocation
+# from instagramy import InstagramLocation
+# from .InstaLocation import InstaLocation
 
 async def exportToText():
     locations = await sync_to_async(Location.objects.all)()
@@ -48,6 +48,32 @@ async def importFromText():
             except Exception as e:
                 print(f'Import error {e}')
 
+
+async def updateLocationFromTxt():
+    async with aiofiles.open(settings.BASE_DIR/'static'/'check_files'/'verified-location.txt', 'r') as f:
+        i=0
+        async for line in f:
+            try:
+                data = line.strip().split(';')
+                loc = await sync_to_async(Location.objects.filter)(
+                    city_name__iexact=data[1],
+                )
+
+                loc =  await sync_to_async(loc.first)()
+
+                if loc is None:
+                    loc = await sync_to_async(Location.objects.create)(
+                        city_name=data[1],
+                    )
+                loc.location_id = data[0]
+                loc.lat = data[3]
+                loc.lng = data[4]
+                await sync_to_async(loc.save)()
+                print(i)
+                i += 1
+            except Exception as e:
+                print(f'Import error {e}')
+
 def handleImport():
     asyncio.run(importFromText())
 
@@ -56,3 +82,9 @@ def handleExport():
 
 def handleOnlyIdExport():
     asyncio.run(exportOnlyId())
+
+def handleUpdateLocation():
+    asyncio.run(updateLocationFromTxt())
+
+if __name__ == "__main__":
+    handleUpdateLocation()
