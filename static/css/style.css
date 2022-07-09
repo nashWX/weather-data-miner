@@ -138,16 +138,17 @@ active report page styles
 
 .report-page,
 .hashtag-page {
-    background-image: url(../img/report-page-bg.png);
+    /* background-image: url(../img/report-page-bg.png); */
+    background-image: url(../img/new-bg.png);
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;
     min-height: 79vh;
 }
 
-.hashtag-page {
+/* .hashtag-page {
     background-image: url(../img/hashtag-page-bg.png);
-}
+} */
 
 .warning-map {
     /* overflow: hidden; */
