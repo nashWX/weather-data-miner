@@ -38,6 +38,7 @@ class AccessPassword(models.Model):
         verbose_name='Coordinate Type'
     )
     nearby_locations = models.JSONField(null=True, blank=True, verbose_name='All the locations inside the coordinates')
+    generate_new_big_map = models.BooleanField(default=False, help_text='generate new big map each time you visit the warning page', verbose_name='Generate big map', null=False, blank=False)
 
     @property
     def locations(self):

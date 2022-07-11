@@ -105,7 +105,7 @@ def activeReport(request):
     lats, lons = user.location_coordinate
     lats_bounds = user.lats_bounds.split(',')
     lons_bounds = user.lons_bounds.split(',')
-    context['map_path'] = big_map(lats_bounds=lats_bounds,lons_bounds=lons_bounds, lats=lats, lons=lons, place_name=user.place_name)
+    context['map_path'] = big_map(lats_bounds=lats_bounds,lons_bounds=lons_bounds, lats=lats, lons=lons, place_name=user.place_name, force=user.generate_new_big_map)
     return render(request, 'active-report.html', context=context)
 
 
@@ -143,7 +143,7 @@ def warningList(request):
     lons = [warning.location.lng for warning in warnings]
     warnings = [warning.formated for warning in warnings]
     key = f"{request.GET.get('type')}_last_update"
-    last_update = cache.get(key)
+    last_update = cache.get(key) or dt.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
     context = {
         'warnings': warnings,
@@ -155,7 +155,7 @@ def warningList(request):
     lons_bounds = user.lons_bounds.split(',')
     coordinate = lats + lons
     map_name = str(str(coordinate).__hash__())
-    context['map_path'] = big_map(lats_bounds=lats_bounds,lons_bounds=lons_bounds, lats=lats, lons=lons, place_name=map_name, marker=True)
+    context['map_path'] = big_map(lats_bounds=lats_bounds,lons_bounds=lons_bounds, lats=lats, lons=lons, place_name=map_name, marker=True, force=user.generate_new_big_map)
 
     return JsonResponse(context, safe=False)
 

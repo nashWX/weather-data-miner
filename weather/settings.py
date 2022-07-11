@@ -180,10 +180,10 @@ CELERYBEAT_SCHEDULE = {
     #     'task': 'app.tasks.update_population',
     #     'schedule': crontab(minute='0', hour='*/6')
     # },
-    # 'update_empty_map': {
-    #     'task': 'app.tasks.update_empty_map',
-    #     'schedule': crontab(minute='30', hour='*/4')
-    # },
+    'update_empty_map': {
+        'task': 'app.tasks.update_empty_map',
+        'schedule': crontab(minute='30', hour='*/4')
+    },
 }
 
 

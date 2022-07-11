@@ -12,7 +12,7 @@ from django.conf import settings
 saveLocation = settings.BASE_DIR / 'media' / 'big_map' 
 shapefile_path = settings.BASE_DIR / 'static/cb_2015_us_county_500k/cb_2015_us_county_500k'
 
-def big_map(lats_bounds=None, lons_bounds=None, lats=None, lons=None, place_name=None, marker=False):
+def big_map(lats_bounds=None, lons_bounds=None, lats=None, lons=None, place_name=None, marker=False, force=False):
         Path(saveLocation).mkdir(parents=True, exist_ok=True)
         # # When address is given a "location, state" it generates a .png of the location
         # address= 'Fort Myers, Florida'
@@ -30,7 +30,7 @@ def big_map(lats_bounds=None, lons_bounds=None, lats=None, lons=None, place_name
 
         returnPath = f'/media/big_map/{place_name}.png'
 
-        if Path(name).is_file():
+        if Path(name).is_file() and not force:
                 return  returnPath
 
         if lats_bounds is None or lons_bounds is None or lats is None or lons is None or place_name is None:
