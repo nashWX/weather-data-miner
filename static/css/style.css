@@ -162,7 +162,7 @@ active report page styles
 .warning-map img {
     max-width: 100%;
     width: 100%;
-    height: 334px;
+    /* height: 334px; */
     object-fit: contain;
 }
 
@@ -668,9 +668,9 @@ a.weather-info.hashtag .map {
         display: none;
     }
 
-    .warning-map img {
+    /* .warning-map img {
         height: 280px;
-    }
+    } */
 
     .option-container {
         max-width: 100%;
