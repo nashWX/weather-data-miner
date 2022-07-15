@@ -40,10 +40,22 @@ img {
     padding-top: 0.7rem;
 }
 
+.loginform img {
+    max-width: 100%;
+    width: 100%;
+    height: auto;
+}
+
 .loginform h2 {
-    color: #22D4CE;
-    font-size: 4rem;
+    /* color: #22D4CE; */
+    font-size: 3rem;
     text-transform: uppercase;
+    font-style: normal;
+    background: linear-gradient(#14D4CF, #2FABE5);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-align: center;
 }
 
 .loginform .form-control {

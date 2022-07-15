@@ -23,7 +23,7 @@
         <div class="col-12 min-vh-100 d-flex align-items-center justify-content-center">
             <div class="form-container">
                 <form class="loginform text-center" method="POST" action="{% url 'authorize' %}">
-                    <img src="/static/img/home-logo.png" alt="home-log" style="max-height: 94px;">
+                    <img src="/static/img/home-logo.png" alt="home-log">
                     {% csrf_token %}
                     <h2>Password</h2>
                     <div class="mb-sm-4 mb-2">
@@ -104,5 +104,10 @@
 
             console.log(starttime.nextElementSibling.value)
         }
+    </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            document.body.style.zoom = "{{util.zoom_label}}";
+        });
     </script>
 {% endblock %}

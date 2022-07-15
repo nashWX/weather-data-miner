@@ -1,4 +1,5 @@
 from datetime import datetime
+from email.policy import default
 import json
 import pytz
 import os
@@ -83,6 +84,7 @@ class Util(models.Model):
     insta_sessionid = models.TextField(max_length=512, verbose_name='Instagram Session Id', help_text='Insert instagram sessionid separated by comma', null=True, blank=True)
     about_text = models.TextField(verbose_name='About Text', null=True, blank=True)
     turn_on_filtering = models.BooleanField(verbose_name='Turn on Post filtering', default=False)
+    zoom_label = models.CharField(max_length=10, blank=True, null=True, default='100%', help_text='Login page zoom label')
 
 class Location(models.Model):
     states = {

@@ -41,7 +41,7 @@ def big_map(lats_bounds=None, lons_bounds=None, lats=None, lons=None, place_name
         # m = Basemap(projection='merc',llcrnrlat=center[0]-2,urcrnrlat=center[0]+2,\
         #                 llcrnrlon=center[1]-4, urcrnrlon=center[1]+4, resolution='l', area_thresh=100)
 
-        x,y = m(lons, lats)
+        
         try:
             m.drawcoastlines(color='aqua', linewidth=1)
         except Exception as e:
@@ -52,9 +52,10 @@ def big_map(lats_bounds=None, lons_bounds=None, lats=None, lons=None, place_name
         m.drawrivers(color='teal', linewidth=0.9)
         m.fillcontinents(color='black', lake_color='gray')
         m.drawlsmask(land_color='black', ocean_color='aqua', resolution='l')
-        m.readshapefile(str(shapefile_path),'counties',drawbounds=True,color='aqua')
+        # m.readshapefile(str(shapefile_path),'counties',drawbounds=True,color='aqua')
         # m.readshapefile("F:/workspace/django/weatherapp/weather/static/virginia/vr",'counties',drawbounds=True,color='aqua')
         if marker:
+                x,y = m(lons, lats)
                 m.plot(x, y, 'ko', markersize=6.5)
                 m.plot(x, y, 'wo', markersize=4)
 

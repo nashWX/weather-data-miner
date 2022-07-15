@@ -73,11 +73,12 @@ def authorize(request):
 
     end_local =  dt.datetime.now(tz=pytz.timezone(zone)).strftime('%Y-%m-%d %I:%M %p')
     end_utc =   dt.datetime.now(tz=pytz.utc).isoformat()
-
+    util = Util.objects.first()
     context = {
         'suggestions': suggestions,
         'end_utc': end_utc,
         'end_local': end_local,
+        'util': util,
     }
 
     return render(request, 'authorize.html', context=context)
